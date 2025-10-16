@@ -7,4 +7,5 @@ Team Members:
 - Keith Sallis - KeithSallis@my.unt.edu 
 
 Project Idea: User(s) can make their own stories with prompts using AI that will output a narrative and images.
-Jira (Workspace) Link: 
+
+Jira (Workspace) Link: https://my-team-autd1yj7.atlassian.net/jira/software/projects/SCRUM/boards/1?atlOrigin=eyJpIjoiZmE0MGI4NDAzOGZmNDQ0OWJkN2QzNmEzMTMzNDA2OWEiLCJwIjoiaiJ9
