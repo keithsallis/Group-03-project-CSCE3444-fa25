@@ -13,6 +13,6 @@ How to run:
     - command: npm run dev
     - local host link will take you to app build
     
-    directory should look similar to this: " PS C:\Users\krsal\OneDrive - UNT System\Group-03-project-CSCE3444-fa25\story-forge-app\src> npm run dev "
+    directory should look similar to this: " PS C:\Users\krsal\OneDrive - UNT System\Group-03-project-CSCE3444-fa25\story-forge-app> npm run dev  "
 
 Jira (Workspace) Link: https://my-team-autd1yj7.atlassian.net/jira/software/projects/SCRUM/boards/1?atlOrigin=eyJpIjoiZmE0MGI4NDAzOGZmNDQ0OWJkN2QzNmEzMTMzNDA2OWEiLCJwIjoiaiJ9
