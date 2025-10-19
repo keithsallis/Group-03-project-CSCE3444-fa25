@@ -1,30 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 
+// DropdownMenu Component
 function DropdownMenu() {
-  // 'useState' to manage which option is currently selected
-  const [selectedOption, setSelectedOption] = useState('fantasy'); // Default value
-
-  // This function updates the state when the user selects a new option
-  const handleSelectionChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
-
   return (
-    <div className="w-full max-w-xs">
-      <label htmlFor="genre-select" className="block text-sm font-medium text-gray-200 mb-2">
-        Select a Genre
-      </label>
-      <select
-        id="genre-select"
-        value={selectedOption}
-        onChange={handleSelectionChange}
-        className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="fantasy">Fantasy</option>
-        <option value="sci-fi">Science Fiction</option>
-        <option value="mystery">Mystery</option>
-        <option value="horror">Horror</option>
-      </select>
+    <div className="w-full p-4 h-16 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm flex items-center justify-center">
+       <span className="text-center font-medium text-blue-200">Select Genre</span>
     </div>
   );
 }
