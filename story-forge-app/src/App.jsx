@@ -52,7 +52,7 @@ function App() {
     const jsonPayload = JSON.stringify(storyInputs, null, 2);
     console.log("--- Sending to Backend ---");
     console.log(jsonPayload);
-    setStory(`Story forged with the following details:\n\n${jsonPayload}`);
+    setStory(`Story forged with the following details:\n\n${jsonPayload}`); // placeholder for actual story output: for KAVAN
     
     // 1. Set the story as "started"
     setIsStoryStarted(true);
