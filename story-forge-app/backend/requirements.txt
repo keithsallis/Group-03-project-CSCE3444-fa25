@@ -3,4 +3,4 @@ uvicorn[standard]
 pydantic
 langchain
 langchain-community
-python-cors
+fastapi-cors
