@@ -1,6 +1,7 @@
-// src/App.jsx (Updated)
+// src/App.jsx (Updated to call the backend)
+
 import Header from './Header.jsx';
-import PromptInput from './PromptInput.jsx'; 
+import PromptInput from './PromptInput.jsx';
 import GenreSelect from './GenreSelect.jsx';
 import Footer from './Footer.jsx';
 import OutputBox from './OutPutBox.jsx';
@@ -8,20 +9,18 @@ import CharacterInput from './CharacterInput.jsx';
 import Sidebar from './sidebar.jsx';
 import SceneBuilder from './SceneBuilder.jsx';
 
-// 1. Update React import and add 'useEffect'
 import React, { useState, useEffect } from 'react';
-
-// 2. NEW IMPORTS for Firebase Auth
-import { auth } from './firebase.js'; //
+import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 
 // --- Main App Component ---
 function App() {
   const [story, setStory] = useState("Your generated story will appear here...");
   const [user, setUser] = useState(null);
-  
-  // NEW STATE: To track if the story has been started
   const [isStoryStarted, setIsStoryStarted] = useState(false);
+  
+  // NEW: Add a loading state to give user feedback
+  const [isLoading, setIsLoading] = useState(false);
 
   const [storyInputs, setStoryInputs] = useState({
     characters: [],
@@ -47,26 +46,60 @@ function App() {
   const handleSettingChange = (e) => setStoryInputs(prev => ({ ...prev, setting: e.target.value }));
   const handlePromptChange = (e) => setStoryInputs(prev => ({ ...prev, prompt: e.target.value }));
 
-  // MODIFIED: This function now handles the UI state change
-  const handleStoryForge = () => {
-    const jsonPayload = JSON.stringify(storyInputs, null, 2);
-    console.log("--- Sending to Backend ---");
-    console.log(jsonPayload);
-    setStory(`Story forged with the following details:\n\n${jsonPayload}`); // placeholder for actual story output: for KAVAN
-    
-    // 1. Set the story as "started"
-    setIsStoryStarted(true);
+  // --- MODIFIED: This function now calls the FastAPI backend ---
+  const handleStoryForge = async () => {
+    if (isLoading) return; // Prevent multiple requests
 
-    // 2. Clear the prompt for the next input, but keep other context
-    setStoryInputs(prev => ({
-        ...prev,
-        prompt: ''
-    }));
+    setIsLoading(true);
+    // Give immediate feedback in the output box
+    setStory(isStoryStarted ? story + "\n\n..." : "Forging your story... ⚔️");
+
+    // If the story has started, use the current story as context. Otherwise, start fresh.
+    const previousStoryPayload = isStoryStarted ? story : "";
+
+    // Construct the payload for the API.
+    // Note: The backend expects 'environment', so we map 'setting' to it.
+    const payload = {
+        characters: storyInputs.characters,
+        genre: storyInputs.genre,
+        environment: storyInputs.setting,
+        prompt: storyInputs.prompt,
+        previous_story: previousStoryPayload
+    };
+
+    try {
+        const response = await fetch('http://localhost:8000/generate_story', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || "An unknown error occurred.");
+        }
+
+        const data = await response.json();
+        
+        // If this is the first generation, replace the text.
+        // Otherwise, append the new part to the existing story.
+        if (isStoryStarted) {
+            setStory(prev => prev.slice(0, -4) + "\n\n" + data.story); // Replaces the "..."
+        } else {
+            setStory(data.story);
+        }
+
+        setIsStoryStarted(true); // Mark the story as started
+        setStoryInputs(prev => ({ ...prev, prompt: '' })); // Clear the prompt
+
+    } catch (error) {
+        console.error("Error forging story:", error);
+        setStory(`⚠️ Error: ${error.message}. Is your Python backend server running?`);
+    } finally {
+        setIsLoading(false); // Re-enable the forge button
+    }
   };
 
-  
-
-  // MODIFIED: This function now also resets the UI state
   const handleNewChat = () => {
     setStory("Your generated story will appear here...");
     setStoryInputs({
@@ -75,18 +108,14 @@ function App() {
         setting: '',
         prompt: ''
     });
-    // Reset the story state to show initial inputs again
     setIsStoryStarted(false);
   };
 
   return (
-    // After
-<div className="bg-blue-600 min-h-screen min-h-screen text-white font-sans flex antialiased"> 
+    <div className="bg-blue-600 min-h-screen text-white font-sans flex antialiased"> 
       <Sidebar onNewChat={handleNewChat} />
-      
       <div className="flex-1 flex flex-col">
         <Header user={user} />
-        
         <main className="flex-grow flex flex-col items-center justify-between p-6 lg:p-12 space-y-8">
             <div className="w-full max-w-4xl text-center space-y-2">
                  <h2 className="text-4xl md:text-5xl font-bold">
@@ -94,11 +123,9 @@ function App() {
                  </h2>
                  <p className="text-lg text-blue-200">What masterpiece will you forge today?</p>
             </div>
-            
             <div className="w-full max-w-4xl flex-grow min-h-[300px]">
                  <OutputBox storyText={story} />
             </div>
-
             <div className="w-full max-w-4xl space-y-4">
               {storyInputs.characters.length > 0 && (
                 <div className="p-4 bg-black/20 rounded-lg">
@@ -113,12 +140,8 @@ function App() {
                     </div>
                 </div>
               )}
-
-              {/* 3. This grid now conditionally renders its children */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <CharacterInput onAddCharacter={handleAddCharacter} />
-                  
-                  {/* These components only show if the story has NOT started */}
                   {!isStoryStarted && (
                     <>
                       <GenreSelect 
@@ -136,6 +159,8 @@ function App() {
                 prompt={storyInputs.prompt}
                 onPromptChange={handlePromptChange}
                 onForge={handleStoryForge}
+                // Pass the loading state to disable the button during generation
+                isLoading={isLoading} 
               />
             </div>
         </main>
