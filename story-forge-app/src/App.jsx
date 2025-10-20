@@ -1,6 +1,6 @@
 import Header from './Header.jsx';
 import PromptInput from './PromptInput.jsx'; 
-import DropdownMenu from './DropdownMenu.jsx';
+import GenreSelect from './GenreSelect.jsx';
 import Footer from './Footer.jsx';
 import OutputBox from './OutPutBox.jsx';
 import CharacterInput from './CharacterInput.jsx';
@@ -38,7 +38,7 @@ function App() {
             <div className="w-full max-w-4xl space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <CharacterInput />
-                  <DropdownMenu />
+                  <GenreSelect />
                   <SceneBuilder />
               </div>
               <PromptInput />

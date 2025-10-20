@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-// CharacterInput Component
+// --- SceneBuilder Component ---
 function SceneBuilder() {
+    // State to hold the setting description
+    const [setting, setSetting] = useState('');
+
+    // Handle input changes and update the state
+    const handleChange = (e) => {
+        setSetting(e.target.value);
+    };
+
     return (
-        <div className="w-full p-4 h-16 bg-white/10 border border-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
-            <span className="text-gray-200 font-medium">Setting</span>
+        <div className="w-full h-16">
+            <input
+                type="text"
+                value={setting}
+                onChange={handleChange}
+                placeholder="Describe the setting..."
+                className="w-full h-full p-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+            />
         </div>
     );
 }
