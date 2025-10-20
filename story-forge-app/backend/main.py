@@ -77,7 +77,6 @@ def generate_story(request: StoryRequest):
 - {rules['character_handling']}
 - {rules['continuity']}
 - {rules['style']}
-- {rules['word_limit']}
 
 ---
 **Previous Story:**
@@ -97,8 +96,7 @@ Continue the story now:
     # 4. Run the LLM to generate the story continuation
     try:
         response = llm.invoke(full_prompt)
-        # Using .strip() is good practice to remove leading/trailing whitespace
-        return {"story": response.strip()}
+        return {"story": response}
     except Exception as e:
         print(f"Error invoking Ollama: {e}")
         return {"error": "Failed to generate story from model."}, 500
