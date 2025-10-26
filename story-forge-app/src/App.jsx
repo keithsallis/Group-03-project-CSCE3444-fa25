@@ -3,11 +3,10 @@
 import Header from './Header.jsx';
 import PromptInput from './PromptInput.jsx';
 import GenreSelect from './GenreSelect.jsx';
-import Footer from './Footer.jsx';
 import OutputBox from './OutPutBox.jsx';
 import CharacterInput from './CharacterInput.jsx';
 import Sidebar from './sidebar.jsx';
-import SceneBuilder from './SceneBuilder.jsx';
+import SceneBuilder from './SceneBuilder.jsx';   
 
 import React, { useState, useEffect } from 'react';
 import { auth } from './firebase.js';
@@ -15,13 +14,16 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 // --- Main App Component ---
 function App() {
+  // variable for story state management
   const [story, setStory] = useState("Your generated story will appear here...");
+  
   const [user, setUser] = useState(null);
+  // state to track if story generation has started
   const [isStoryStarted, setIsStoryStarted] = useState(false);
   
-  // NEW: Add a loading state to give user feedback
   const [isLoading, setIsLoading] = useState(false);
 
+  // state to manage story input fields
   const [storyInputs, setStoryInputs] = useState({
     characters: [],
     genre: '',
@@ -29,19 +31,25 @@ function App() {
     prompt: ''
   });
 
+  // monitor authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
     return () => unsubscribe();
   }, []);
 
+  // handles new character addition
   const handleAddCharacter = (newCharacter) => {
+    // creates copy of previous characters and adds new character
     setStoryInputs(prev => ({ ...prev, characters: [...prev.characters, newCharacter] }));
   };
 
+  // handles character removal
   const handleRemoveCharacter = (indexToRemove) => {
+    // creates copy of previous characters and removes the character at indexToRemove
     setStoryInputs(prev => ({ ...prev, characters: prev.characters.filter((_, index) => index !== indexToRemove) }));
   };
   
+  //function handles genre change
   const handleGenreChange = (newGenre) => setStoryInputs(prev => ({ ...prev, genre: newGenre }));
   const handleSettingChange = (e) => setStoryInputs(prev => ({ ...prev, setting: e.target.value }));
   const handlePromptChange = (e) => setStoryInputs(prev => ({ ...prev, prompt: e.target.value }));
@@ -90,7 +98,7 @@ function App() {
         }
 
         setIsStoryStarted(true); // Mark the story as started
-        setStoryInputs(prev => ({ ...prev, prompt: '' })); // Clear the prompt
+        setStoryInputs(prev => ({ ...prev, prompt: '' })); // clear the prompt
 
     } catch (error) {
         console.error("Error forging story:", error);
@@ -100,6 +108,7 @@ function App() {
     }
   };
 
+  // function handles new chat by resetting states
   const handleNewChat = () => {
     setStory("Your generated story will appear here...");
     setStoryInputs({
@@ -111,6 +120,7 @@ function App() {
     setIsStoryStarted(false);
   };
 
+  // rendering the main app layout
   return (
     <div className="bg-blue-600 min-h-screen text-white font-sans flex antialiased"> 
       <Sidebar onNewChat={handleNewChat} />

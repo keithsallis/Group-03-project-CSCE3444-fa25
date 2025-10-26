@@ -4,6 +4,7 @@ import SettingsDropdown from './SettingsDropdown.jsx';
 
 // 1. Accept the 'user' prop from App.jsx
 function Header({ user }) {
+
     return (
         // Original layout from your file
         <header className="p-6 flex justify-end items-center">

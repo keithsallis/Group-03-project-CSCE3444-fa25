@@ -2,16 +2,23 @@ import React, { useState } from 'react';
 
 function GenreSelect({ selectedGenre, onGenreChange }) {
 
+    // state to track if the genre card is expanded
     const [isExpanded, setIsExpanded] = useState(false);
 
+    // list of available genres
     const genres = ["Fantasy", "Science Fiction", "Mystery", "Adventure"];
 
+    // handles genre selection and collapses the card
     const handleGenreSelect = (genre, event) => {
         event.stopPropagation();
         onGenreChange(genre);
         setIsExpanded(false);
     };
+    
+    // dynamic classes for the genre card based on expansion state
     const cardClasses = `w-full p-4 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm cursor-pointer transform transition-all duration-500 ease-in-out ${isExpanded ? 'h-64 scale-105' : 'h-16 hover:bg-white/20'}`;
+   
+    // rendering genre selection card
     return (
         <div className={cardClasses} onClick={() => !isExpanded && setIsExpanded(true)}>
             <div className="flex flex-col h-full">

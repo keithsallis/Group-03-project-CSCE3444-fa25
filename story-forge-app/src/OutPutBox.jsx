@@ -1,7 +1,6 @@
-// src/OutPutBox.jsx (Updated)
-
 import React from 'react';
 
+// OutputBox component to display the generated story
 function OutputBox({ storyText }) {
   return (
     <div className="w-full h-full p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl shadow-lg flex justify-center overflow-hidden">

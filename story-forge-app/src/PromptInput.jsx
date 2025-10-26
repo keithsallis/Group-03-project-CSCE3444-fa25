@@ -3,7 +3,7 @@ import React from 'react';
 // --- PromptInput Component ---
 function PromptInput({ prompt, onPromptChange, onForge }) {
   
-  // returns a text input with a forge button
+  // rendering prompt input with arrow button to enter
   return (
     <div className="relative w-full">
       <input

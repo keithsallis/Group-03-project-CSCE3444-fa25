@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
 
 function CharacterInput({ onAddCharacter }) {
+    // state to manage expansion of the card
     const [isExpanded, setIsExpanded] = useState(false);
+    // initial state for character details
     const initialCharacterState = { name: '', personality: '', gender: '' };
+    // state to manage character details input
     const [character, setCharacter] = useState(initialCharacterState);
 
+    // handles input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setCharacter(prev => ({ ...prev, [name]: value }));
     };
     
+    // handles confirm button click
     const handleConfirm = (e) => {
         e.stopPropagation();
         if (character.name) { // Only add if there's at least a name
             onAddCharacter(character);
             setCharacter(initialCharacterState); // Reset form
         }
+        // collapse the card after adding
         setIsExpanded(false);
     };
 
@@ -24,8 +30,9 @@ function CharacterInput({ onAddCharacter }) {
         setIsExpanded(false);
     };
 
-    const cardClasses = `w-full p-4 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm cursor-pointer transform transition-all duration-500 ease-in-out ${isExpanded ? 'h-64 scale-105' : 'h-16 hover:bg-white/20'}`;
+    const cardClasses = `w-full p-4 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm cursor-pointer transform transition-all duration-500 ease-in-out ${isExpanded ? 'h-64 scale-105' : 'h-16 hover:bg-white/20'}`; // if expanded taller height, if not shorter height
 
+    // rendering character input card
     return (
         <div className={cardClasses} onClick={() => !isExpanded && setIsExpanded(true)}>
             <div className="flex flex-col h-full">

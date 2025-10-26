@@ -22,10 +22,7 @@ function SidebarLink({ text, icon, onClick }) {
   );
 }
 
-/**
- * The Sidebar component.
- * It accepts the 'onNewChat' prop from App.jsx.
- */
+// function for new chat componenet in sidebar
 function Sidebar({ onNewChat }) {
   return (
     // This styling will overlay the gradient from App.jsx
