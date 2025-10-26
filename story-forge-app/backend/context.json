@@ -3,13 +3,22 @@
       "Fantasy": "Write in a high-fantasy style...",
       "Sci-Fi": "Adopt a science fiction narrative...",
       "Mystery": "Craft a suspenseful mystery...",
-      "Romance": "Focus on the emotional development..."
+      "Romance": "Focus on the emotional development...",
+      "Horror": "Create a chilling horror atmosphere...",
+      "Adventure": "Develop an action-packed adventure...",
+      "Thriller": "Build a tense and gripping thriller...",
+      "Drama": "Explore deep character relationships...",
+      "Comedy": "Incorporate humor and light-hearted situations..."
     },
     "environments": {
       "Enchanted Forest": "A mystical woodland...",
       "Cyberpunk City": "A neon-soaked, rain-slicked metropolis...",
       "Quiet Library": "An ancient library...",
-      "Space Colony": "A sterile, metallic habitat..."
+      "Space Colony": "A sterile, metallic habitat...",
+      "Crime Scene": "A gritty urban alleyway...",
+      "Spooky Cabin": "A creaky, isolated cabin in the woods...",
+      "Difficult Dungeon": "A dark, trap-filled dungeon...",
+      "Moonlit Dinner": "A romantic dinner under the stars..."
     },
     "rules": {
       "introduction": "You are a master storyteller AI...",
