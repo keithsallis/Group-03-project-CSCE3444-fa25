@@ -129,7 +129,12 @@ function App() {
         <main className="flex-grow flex flex-col items-center justify-between p-6 lg:p-12 space-y-8">
             <div className="w-full max-w-4xl text-center space-y-2">
                  <h2 className="text-4xl md:text-5xl font-bold">
-                   Welcome, {user ? user.displayName.split(' ')[0] : 'User'}
+                   {(() => {
+                     if (!user) return 'Welcome, User'
+                     const display = user.displayName || ''
+                     const firstName = display ? display.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'User')
+                     return `Welcome, ${firstName}`
+                   })()}
                  </h2>
                  <p className="text-lg text-blue-200">What masterpiece will you forge today?</p>
             </div>
