@@ -1,7 +1,6 @@
 // src/SettingsDropdown.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { auth } from './firebase.js'; //
-import { signOut } from 'firebase/auth';
+import { useAuth } from './contexts/authCore.jsx'
 
 // This component expects a 'user' object as a prop
 function SettingsDropdown({ user }) {
@@ -19,12 +18,14 @@ function SettingsDropdown({ user }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownRef]);
 
+  const { logout } = useAuth();
+
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      await logout();
       setIsOpen(false); // Close dropdown on logout
     } catch (error) {
-      console.error('Error during logout:', error.message);
+      console.error('Error during logout:', error.message || error);
     }
   };
 
