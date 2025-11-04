@@ -43,7 +43,7 @@ with open("context.json", "r") as f:
 # --- AI Model Initialization ---
 # This initializes the connection to the local Ollama model.
 # Make sure Ollama is running with 'ollama run llama3'
-llm = Ollama(model="llama3")
+llm = Ollama(model="gemma:2b")
 
 # --- API Endpoint ---
 @app.post("/generate_story")
