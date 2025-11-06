@@ -1,11 +1,31 @@
+#
+import os
+from dotenv import load_dotenv
+
 import json
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 
-# LangChain components to integrate with Ollama
-from langchain_community.llms import Ollama
+
+# load environment variables from .env file
+load_dotenv()
+
+##### ADD THIS BLOCK START #####
+print("--- LOADING .ENV FILE ---")
+api_key = os.getenv("GOOGLE_API_KEY")
+if api_key:
+    # This will print the last 4 characters of your key
+    # It proves the .env file was read.
+    print(f"API Key Found: ...{api_key[-4:]}")
+else:
+    print("!!! API KEY NOT FOUND IN ENVIRONMENT !!!")
+print("-------------------------")
+##### ADD THIS BLOCK END #####
+
+# import google genai
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # --- Pydantic Models for Request Body ---
 class Character(BaseModel):
@@ -41,9 +61,14 @@ with open("context.json", "r") as f:
     context_data = json.load(f)
 
 # --- AI Model Initialization ---
-# This initializes the connection to the local Ollama model.
-# Make sure Ollama is running with 'ollama run llama3'
-llm = Ollama(model="gemma:2b")
+# CHANGE 2: Instantiate ChatGoogleGenerativeAI instead of Ollama
+# It will automatically find the GOOGLE_API_KEY from the environment.
+# "gemini-1.5-flash" is a great choice for speed and capability.
+llm = ChatGoogleGenerativeAI (
+    model="gemini-2.0-flash-lite",
+    temperature=0.7,  # Adjust creativity
+    google_api_key=api_key
+)
 
 # --- API Endpoint ---
 @app.post("/generate_story")
@@ -95,10 +120,12 @@ Continue the story now:
 
     # 4. Run the LLM to generate the story continuation
     try:
+        # CHANGE 3: The response object is an AIMessage,
+        # so we access the text with the '.content' attribute.
         response = llm.invoke(full_prompt)
-        return {"story": response}
+        return {"story": response.content}
     except Exception as e:
-        print(f"Error invoking Ollama: {e}")
+        print(f"Error invoking Google model: {e}")
         return {"error": "Failed to generate story from model."}, 500
 
 # To run the server, use the command in your terminal:
