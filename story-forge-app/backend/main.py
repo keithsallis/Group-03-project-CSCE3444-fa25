@@ -8,11 +8,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 
+#SHOW RESPONSE TIMING.
 
 # load environment variables from .env file
 load_dotenv()
 
-##### ADD THIS BLOCK START #####
+##### Test block to make sure API key is loaded #####
 print("--- LOADING .ENV FILE ---")
 api_key = os.getenv("GOOGLE_API_KEY")
 if api_key:
@@ -22,7 +23,7 @@ if api_key:
 else:
     print("!!! API KEY NOT FOUND IN ENVIRONMENT !!!")
 print("-------------------------")
-##### ADD THIS BLOCK END #####
+##### Test end #####
 
 # import google genai
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -45,12 +46,11 @@ app = FastAPI()
 
 # --- CORS Configuration ---
 # Allows the React frontend (running on localhost:5173) to communicate with the backend
-origins = [
-    "http://localhost:5173",
-]
+# changed to allow multiple origins from env variable
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[o.strip() for o in ALLOWED_ORIGINS],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
