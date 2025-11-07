@@ -11,7 +11,8 @@ import React, { useState, useEffect } from 'react';
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 
-
+const API_BASE = import.meta.env.VITE_API_URL ?? "https://group-03-project-csce3444-fa25.onrender.com";
+console.log("API_BASE =", API_BASE);
 
 // --- Main App Component ---
 function App() {
@@ -77,8 +78,6 @@ function App() {
     };
 
     try {
-      // Get API base URL from environment variables
-      const API_BASE = import.meta.env.VITE_API_URL;
         // changed to call API from API base URL
         const response = await fetch(`${API_BASE}/generate_story`, {
             method: 'POST',
