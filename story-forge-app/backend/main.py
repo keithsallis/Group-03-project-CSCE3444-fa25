@@ -46,12 +46,20 @@ class StoryRequest(BaseModel):
 app = FastAPI()
 
 # --- CORS Configuration ---
-# Allows the React frontend (running on localhost:5173) to communicate with the backend
-# changed to allow multiple origins from env variable
-ALLOWED_ORIGINS = os.getenv("https://group-03-project-csce3444-fa25.onrender.com/", "http://localhost:5173").split(",")
+from fastapi.middleware.cors import CORSMiddleware
+import re
+
+# pulls allowed origins from render environment variables
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173"
+).split(",")
+
+# 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in ALLOWED_ORIGINS],
+    allow_origins=[o.strip() for o in ALLOWED_ORIGINS if o.strip()],
+    allow_origin_regex=r"https://.*\.vercel\.app",  # allows any Vercel preview URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
