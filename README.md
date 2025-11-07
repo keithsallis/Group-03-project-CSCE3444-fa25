@@ -9,12 +9,8 @@ Team Members:
 Project Idea: User(s) can make their own stories with prompts using AI that will output a narrative and images.
 
 How to run locally:
-    - enter story-forge-app terminal
-    - command: npm run dev
-    - local host link will take you to app build
-
-    Open terminal in backend and run ""
-    Open Terminal in project directory and run "Ollama run llama3"
-    Open Terminal in "story-forge-app" directory and run "npm run dev  "
+    - Open terminal in "Backend" and run: python -m uvicorn main:app --reload
+    - Open terminal in "story-forge-app" and run: "npm run dev"
+    
 
 Jira (Workspace) Link: https://my-team-autd1yj7.atlassian.net/jira/software/projects/SCRUM/boards/1?atlOrigin=eyJpIjoiZmE0MGI4NDAzOGZmNDQ0OWJkN2QzNmEzMTMzNDA2OWEiLCJwIjoiaiJ9
