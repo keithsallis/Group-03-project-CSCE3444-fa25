@@ -11,7 +11,8 @@ import React, { useState, useEffect } from 'react';
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 
-const API_BASE = import.meta.env.VITE_API_URL;
+
+
 // --- Main App Component ---
 function App() {
   // variable for story state management
@@ -76,6 +77,8 @@ function App() {
     };
 
     try {
+      // Get API base URL from environment variables
+      const API_BASE = import.meta.env.VITE_API_URL;
         // changed to call API from API base URL
         const response = await fetch(`${API_BASE}/generate_story`, {
             method: 'POST',
@@ -83,12 +86,23 @@ function App() {
             body: JSON.stringify(payload)
         });
 
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error || "An unknown error occurred.");
+        // Error handling 
+        const ct = response.headers.get("content-type") || "";
+        let result;
+        if (ct.includes("application/json")) {
+          result = await response.json();
+        }  
+        else {
+          const text = await response.text();
+          throw new Error(`HTTP ${response.status}: ${text.slice(0,200)}`);
         }
+        if (!response.ok) {
+          throw new Error(result?.error || `HTTP ${response.status}`);
+        }
+      // --- end improved block ---
 
-        const data = await response.json();
+      // Use the same variable everywhere below
+      const data = result;
         
         // If this is the first generation, replace the text.
         // Otherwise, append the new part to the existing story.
@@ -107,8 +121,9 @@ function App() {
     } finally {
         setIsLoading(false); // Re-enable the forge button
     }
+    
   };
-
+  
   // function handles new chat by resetting states
   const handleNewChat = () => {
     setStory("Your generated story will appear here...");
@@ -120,6 +135,7 @@ function App() {
     });
     setIsStoryStarted(false);
   };
+  
 
   // rendering the main app layout
   return (
