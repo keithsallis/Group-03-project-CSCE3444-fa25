@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 
+from fastapi import FastAPI, Response
 #SHOW RESPONSE TIMING.
 
 # load environment variables from .env file
@@ -69,7 +70,19 @@ llm = ChatGoogleGenerativeAI (
     temperature=0.7,  # Adjust creativity
     google_api_key=api_key
 )
+# api health endpoints 
 
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "Use POST /generate_story"}
+
+@app.get("/api/health")
+def health():
+    return {"ok": True}
+
+@app.get("/favicon.ico")
+def favicon():
+    return Response(status_code=204)
 # --- API Endpoint ---
 @app.post("/generate_story")
 def generate_story(request: StoryRequest):
