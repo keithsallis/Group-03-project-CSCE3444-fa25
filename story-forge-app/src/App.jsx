@@ -7,11 +7,11 @@ import OutputBox from './OutPutBox.jsx';
 import CharacterInput from './CharacterInput.jsx';
 import Sidebar from './sidebar.jsx';
 import SceneBuilder from './SceneBuilder.jsx';   
-
 import React, { useState, useEffect } from 'react';
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 
+const API_BASE = import.meta.env.VITE_API_URL;
 // --- Main App Component ---
 function App() {
   // variable for story state management
@@ -76,7 +76,8 @@ function App() {
     };
 
     try {
-        const response = await fetch('http://localhost:8000/generate_story', {
+        // changed to call API from API base URL
+        const response = await fetch(`${API_BASE}/generate_story`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
