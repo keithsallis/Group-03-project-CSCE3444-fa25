@@ -10,7 +10,7 @@ function PromptInput({ prompt, onPromptChange, onForge }) {
         type="text"
         value={prompt}
         onChange={onPromptChange}
-        placeholder="Forge your story prompt here..."
+        placeholder="Add a spark of inspiration...."
         className="w-full p-4 pr-12 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
       />
       <button onClick={onForge} className="absolute inset-y-0 right-0 flex items-center justify-center w-12 text-gray-300 hover:text-white transition-colors">

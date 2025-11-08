@@ -138,7 +138,9 @@ function App() {
 
   // rendering the main app layout
   return (
-    <div className="bg-blue-600 h-screen text-white font-sans flex antialiased overflow-hidden"> 
+    // <div className="bg-blue-600 h-screen text-white font-sans flex antialiased overflow-hidden">
+    <div className="h-screen text-white font-sans flex antialiased overflow-hidden" style={{ backgroundColor: '#40534C' }}>
+
       <Sidebar onNewChat={handleNewChat} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header user={user} />

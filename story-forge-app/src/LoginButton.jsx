@@ -9,7 +9,7 @@ function LoginButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300"
+        className="bg-[#1A3636] hover:bg-[#677D6A] text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300"
       >
         Log In
       </button>

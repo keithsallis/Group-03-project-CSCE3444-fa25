@@ -26,7 +26,9 @@ function SidebarLink({ text, icon, onClick }) {
 function Sidebar({ onNewChat }) {
   return (
     // This styling will overlay the gradient from App.jsx
-    <aside className="w-64 h-screen bg-black/20 backdrop-blur-md p-4 flex flex-col shadow-lg flex-shrink-0">
+    //<aside className="w-64 h-screen bg-black/20 backdrop-blur-md p-4 flex flex-col shadow-lg flex-shrink-0">
+    <aside className="w-64 h-screen bg-[#1A3636] p-4 flex flex-col shadow-lg flex-shrink-0">
+
       
       {/* Logo/Title Section */}
       <div className="mb-8 p-4">
