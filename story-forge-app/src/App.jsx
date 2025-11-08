@@ -62,7 +62,7 @@ function App() {
 
     setIsLoading(true);
     // Give immediate feedback in the output box
-    setStory(isStoryStarted ? story + "\n\n..." : "Forging your story... ⚔️");
+    setStory(isStoryStarted ? story + "\n\n..." : "Forging your story... ✨");
 
     // If the story has started, use the current story as context. Otherwise, start fresh.
     const previousStoryPayload = isStoryStarted ? story : "";
@@ -148,13 +148,13 @@ function App() {
             <div className="w-full max-w-4xl text-center space-y-2">
                  <h2 className="text-4xl md:text-5xl font-bold">
                    {(() => {
-                     if (!user) return 'Welcome, User'
+                     if (!user) return 'Ready to Craft?'
                      const display = user.displayName || ''
                      const firstName = display ? display.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'User')
-                     return `Welcome, ${firstName}`
+                     return `Ready to Craft?, ${firstName}`
                    })()}
                  </h2>
-                 <p className="text-lg text-blue-200">What masterpiece will you forge today?</p>
+                 <p className="text-lg text-blue-200">Let's shape a new narrative.</p>
             </div>
             <div className="w-full max-w-4xl flex-grow min-h-[300px]">
                  <OutputBox storyText={story} />
