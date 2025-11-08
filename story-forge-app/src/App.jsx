@@ -1,4 +1,4 @@
-// src/App.jsx (Updated to call the backend)
+// src/App.jsx (Updated with scrolling fixes)
 
 import Header from './Header.jsx';
 import PromptInput from './PromptInput.jsx';
@@ -138,11 +138,11 @@ function App() {
 
   // rendering the main app layout
   return (
-    <div className="bg-blue-600 min-h-screen text-white font-sans flex antialiased"> 
+    <div className="bg-blue-600 h-screen text-white font-sans flex antialiased overflow-hidden"> 
       <Sidebar onNewChat={handleNewChat} />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Header user={user} />
-        <main className="flex-grow flex flex-col items-center justify-between p-6 lg:p-12 space-y-8">
+        <main className="flex-grow flex flex-col items-center p-6 lg:p-12 space-y-8 overflow-y-auto">
             <div className="w-full max-w-4xl text-center space-y-2">
                  <h2 className="text-4xl md:text-5xl font-bold">
                    {(() => {
