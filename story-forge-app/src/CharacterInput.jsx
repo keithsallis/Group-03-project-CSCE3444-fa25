@@ -30,7 +30,7 @@ function CharacterInput({ onAddCharacter }) {
         setIsExpanded(false);
     };
 
-    const cardClasses = `w-full p-4 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm cursor-pointer transform transition-all duration-500 ease-in-out ${isExpanded ? 'h-64 scale-105' : 'h-16 hover:bg-white/20'}`; // if expanded taller height, if not shorter height
+    const cardClasses = `w-full p-4 bg-white/10 border border-white/20 rounded-lg backdrop-blur-sm cursor-pointer transform transition-all duration-500 ease-in-out ${isExpanded ? 'h-64' : 'h-16 hover:bg-white/20'}`; // if expanded taller height, if not shorter height
 
     // rendering character input card
     return (

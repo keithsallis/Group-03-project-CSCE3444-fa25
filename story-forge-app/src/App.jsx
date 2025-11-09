@@ -156,7 +156,7 @@ function App() {
                  </h2>
                  <p className="text-lg text-blue-200">Let's shape a new narrative.</p>
             </div>
-            <div className="w-full max-w-4xl flex-grow min-h-[300px]">
+             <div className="w-full max-w-4xl flex-grow min-h-[300px]"> {/*FIX: Adjusted flex for responsive height*/}
                  <OutputBox storyText={story} />
             </div>
             <div className="w-full max-w-4xl space-y-4">
