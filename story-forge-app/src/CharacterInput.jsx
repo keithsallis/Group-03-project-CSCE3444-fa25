@@ -43,15 +43,46 @@ function CharacterInput({ onAddCharacter }) {
                     <div className="flex justify-between items-center">
                         <h3 className="text-sm font-bold text-white">Character Details</h3>
                         <div className="flex items-center space-x-2">
-                            <button onClick={handleConfirm} className="text-green-400 hover:text-green-300 transition-colors">
+                            <button 
+                                aria-label = "confirm character input"    // 🆕 adds a readable name for screen readers
+                                onClick={handleConfirm} 
+                                className="text-green-400 hover:text-green-300 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                             </button>
-                            <button onClick={handleCancel} className="text-gray-300 hover:text-white text-2xl transition-colors">&times;</button>
+                            <button 
+                                aria-label = "close character input"    // 🆕 adds a readable name for screen readers
+                                onClick={handleCancel} 
+                                className="text-gray-300 hover:text-white text-2xl transition-colors">&times;
+                            </button>
                         </div>
                     </div>
-                    <input type="text" name="name" value={character.name} onChange={handleChange} placeholder="Name" className="pointer-events-auto w-full p-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" onClick={(e) => e.stopPropagation()} />
-                    <input type="text" name="personality" value={character.personality} onChange={handleChange} placeholder="Personality" className="pointer-events-auto w-full p-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" onClick={(e) => e.stopPropagation()} />
-                    <input type="text" name="gender" value={character.gender} onChange={handleChange} placeholder="Gender" className="pointer-events-auto w-full p-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" onClick={(e) => e.stopPropagation()} />
+                    <input 
+                        aria-label="Character name input"    // 🆕 adds a readable name for screen readers
+                        type="text" 
+                        name="name" 
+                        value={character.name} 
+                        onChange={handleChange} 
+                        placeholder="Name" 
+                        className="pointer-events-auto w-full p-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" 
+                        onClick={(e) => e.stopPropagation()} />
+                    <input 
+                        aria-label="Character personality input"    // 🆕 adds a readable name for screen readers
+                        type="text" 
+                        name="personality" 
+                        value={character.personality} 
+                        onChange={handleChange} 
+                        placeholder="Personality" 
+                        className="pointer-events-auto w-full p-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" 
+                        onClick={(e) => e.stopPropagation()} />
+                    <input 
+                        aria-label="Character gender input"    // 🆕 adds a readable name for screen readers
+                        type="text" 
+                        name="gender" 
+                        value={character.gender} 
+                        onChange={handleChange} 
+                        placeholder="Gender" 
+                        className="pointer-events-auto w-full p-2 bg-white/10 border border-white/20 rounded-md text-white placeholder-gray-300 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" 
+                        onClick={(e) => e.stopPropagation()} />
                 </div>
             </div>
         </div>
