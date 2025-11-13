@@ -10,6 +10,7 @@ import SceneBuilder from './SceneBuilder.jsx';
 import React, { useState, useEffect } from 'react';
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
+//import { useNavigate } from "react-router-dom"; 
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "https://group-03-project-csce3444-fa25.onrender.com";
 console.log("API_BASE =", API_BASE);
@@ -25,6 +26,7 @@ function App() {
   
   const [isLoading, setIsLoading] = useState(false);
 
+  // const navigate = useNavigate(); 
   // state to manage story input fields
   const [storyInputs, setStoryInputs] = useState({
     characters: [],
@@ -138,9 +140,9 @@ function App() {
 
   // rendering the main app layout
   return (
+    
     // <div className="bg-blue-600 h-screen text-white font-sans flex antialiased overflow-hidden">
     <div className="h-screen text-white font-sans flex antialiased overflow-hidden" style={{ backgroundColor: '#40534C' }}>
-
       <Sidebar onNewChat={handleNewChat} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header user={user} />
@@ -156,7 +158,7 @@ function App() {
                  </h2>
                  <p className="text-lg text-blue-200">Let's shape a new narrative.</p>
             </div>
-             <div className="w-full max-w-4xl flex-grow min-h-[300px]"> {/*FIX: Adjusted flex for responsive height*/}
+             <div className="w-full max-w-4xl flex-[1_1_45vh] min-h-[160px]"> {/*FIX: Adjusted flex for responsive height*/}
                  <OutputBox storyText={story} />
             </div>
             <div className="w-full max-w-4xl space-y-4">
