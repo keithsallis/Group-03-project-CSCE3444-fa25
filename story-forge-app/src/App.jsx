@@ -1,33 +1,29 @@
-// src/App.jsx (Updated with scrolling fixes)
+// src/App.jsx
 
 import Header from './Header.jsx';
 import PromptInput from './PromptInput.jsx';
-import GenreSelect from './GenreSelect.jsx';
+import GenreSelect from './GenreSelect.jsx'; 
 import OutputBox from './OutPutBox.jsx';
 import CharacterInput from './CharacterInput.jsx';
-import Sidebar from './sidebar.jsx';
+import Sidebar from './sidebar.jsx'; 
 import SceneBuilder from './SceneBuilder.jsx';   
+import SettingsModal from './SettingsModal.jsx';
+
 import React, { useState, useEffect } from 'react';
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
-//import { useNavigate } from "react-router-dom"; 
 
+// Define API Base URL
 const API_BASE = import.meta.env.VITE_API_URL ?? "https://group-03-project-csce3444-fa25.onrender.com";
-console.log("API_BASE =", API_BASE);
 
 // --- Main App Component ---
 function App() {
-  // variable for story state management
   const [story, setStory] = useState("Your generated story will appear here...");
-  
   const [user, setUser] = useState(null);
-  // state to track if story generation has started
   const [isStoryStarted, setIsStoryStarted] = useState(false);
-  
   const [isLoading, setIsLoading] = useState(false);
 
-  // const navigate = useNavigate(); 
-  // state to manage story input fields
+  // State to manage story input fields
   const [storyInputs, setStoryInputs] = useState({
     characters: [],
     genre: '',
@@ -35,42 +31,39 @@ function App() {
     prompt: ''
   });
 
-  // monitor authentication state
+  // --- STATES for Sidebar/Library ---
+  const [savedStories, setSavedStories] = useState([]);
+  const [currentStoryId, setCurrentStoryId] = useState(null);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  // Monitor authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
     return () => unsubscribe();
   }, []);
 
-  // handles new character addition
+  // Handlers for inputs
   const handleAddCharacter = (newCharacter) => {
-    // creates copy of previous characters and adds new character
     setStoryInputs(prev => ({ ...prev, characters: [...prev.characters, newCharacter] }));
   };
 
-  // handles character removal
   const handleRemoveCharacter = (indexToRemove) => {
-    // creates copy of previous characters and removes the character at indexToRemove
     setStoryInputs(prev => ({ ...prev, characters: prev.characters.filter((_, index) => index !== indexToRemove) }));
   };
   
-  //function handles genre change
   const handleGenreChange = (newGenre) => setStoryInputs(prev => ({ ...prev, genre: newGenre }));
   const handleSettingChange = (e) => setStoryInputs(prev => ({ ...prev, setting: e.target.value }));
   const handlePromptChange = (e) => setStoryInputs(prev => ({ ...prev, prompt: e.target.value }));
 
-  // --- MODIFIED: This function now calls the FastAPI backend ---
+  // --- Story Generation Logic ---
   const handleStoryForge = async () => {
-    if (isLoading) return; // Prevent multiple requests
+    if (isLoading) return; 
 
     setIsLoading(true);
-    // Give immediate feedback in the output box
     setStory(isStoryStarted ? story + "\n\n..." : "Forging your story... ✨");
 
-    // If the story has started, use the current story as context. Otherwise, start fresh.
     const previousStoryPayload = isStoryStarted ? story : "";
 
-    // Construct the payload for the API.
-    // Note: The backend expects 'environment', so we map 'setting' to it.
     const payload = {
         characters: storyInputs.characters,
         genre: storyInputs.genre,
@@ -80,52 +73,64 @@ function App() {
     };
 
     try {
-        // changed to call API from API base URL
         const response = await fetch(`${API_BASE}/generate_story`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        // Error handling 
-        const ct = response.headers.get("content-type") || "";
-        let result;
-        if (ct.includes("application/json")) {
-          result = await response.json();
-        }  
-        else {
-          const text = await response.text();
-          throw new Error(`HTTP ${response.status}: ${text.slice(0,200)}`);
-        }
         if (!response.ok) {
-          throw new Error(result?.error || `HTTP ${response.status}`);
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error || `HTTP ${response.status}`);
         }
-      // --- end improved block ---
 
-      // Use the same variable everywhere below
-      const data = result;
+        const data = await response.json();
         
-        // If this is the first generation, replace the text.
-        // Otherwise, append the new part to the existing story.
-        if (isStoryStarted) {
-            setStory(prev => prev.slice(0, -4) + "\n\n" + data.story); // Replaces the "..."
+        const newStoryText = isStoryStarted 
+            ? story.replace(/\.\.\.$/, "") + "\n\n" + data.story 
+            : data.story;
+
+        setStory(newStoryText);
+        setIsStoryStarted(true);
+
+        // --- SAVE TO LIBRARY LOGIC ---
+        if (!currentStoryId) {
+            const newId = Date.now();
+            const newStoryEntry = {
+              id: newId,
+              title: storyInputs.prompt.substring(0, 30) + (storyInputs.prompt.length > 30 ? "..." : ""),
+              content: newStoryText,
+              inputs: { ...storyInputs } 
+            };
+            setSavedStories(prev => [newStoryEntry, ...prev]); 
+            setCurrentStoryId(newId);
         } else {
-            setStory(data.story);
+            setSavedStories(prev => prev.map(s => 
+              s.id === currentStoryId 
+                ? { ...s, content: newStoryText } 
+                : s
+            ));
         }
 
-        setIsStoryStarted(true); // Mark the story as started
-        setStoryInputs(prev => ({ ...prev, prompt: '' })); // clear the prompt
+        setStoryInputs(prev => ({ ...prev, prompt: '' })); 
 
     } catch (error) {
         console.error("Error forging story:", error);
         setStory(`⚠️ Error: ${error.message}. Is your Python backend server running?`);
     } finally {
-        setIsLoading(false); // Re-enable the forge button
+        setIsLoading(false); 
     }
-    
   };
-  
-  // function handles new chat by resetting states
+
+  // --- Load Saved Story ---
+  const handleLoadStory = (savedStory) => {
+    setStory(savedStory.content);
+    setStoryInputs(savedStory.inputs); 
+    setCurrentStoryId(savedStory.id);
+    setIsStoryStarted(true);
+  };
+
+  // --- New Chat / Reset ---
   const handleNewChat = () => {
     setStory("Your generated story will appear here...");
     setStoryInputs({
@@ -135,15 +140,25 @@ function App() {
         prompt: ''
     });
     setIsStoryStarted(false);
+    setCurrentStoryId(null); 
   };
-  
 
-  // rendering the main app layout
+  // --- Settings Modal Handlers ---
+  const handleOpenSettings = () => setIsSettingsModalOpen(true);
+  const handleCloseSettings = () => setIsSettingsModalOpen(false);
+
   return (
-    
-    // <div className="bg-blue-600 h-screen text-white font-sans flex antialiased overflow-hidden">
+    // --- UPDATED: Using the specific #40534C background and overflow settings ---
     <div className="h-screen text-white font-sans flex antialiased overflow-hidden" style={{ backgroundColor: '#40534C' }}>
-      <Sidebar onNewChat={handleNewChat} />
+      
+      <Sidebar 
+        onNewChat={handleNewChat} 
+        onOpenSettings={handleOpenSettings}
+        savedStories={savedStories}
+        onLoadStory={handleLoadStory}
+        currentStoryId={currentStoryId}
+      />
+
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header user={user} />
         <main className="flex-grow flex flex-col items-center p-6 lg:p-12 space-y-8 overflow-y-auto">
@@ -153,14 +168,16 @@ function App() {
                      if (!user) return 'Ready to Craft?'
                      const display = user.displayName || ''
                      const firstName = display ? display.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'User')
-                     return `Ready to Craft?, ${firstName}`
+                     return `Ready to Craft, ${firstName}?`
                    })()}
                  </h2>
                  <p className="text-lg text-blue-200">Let's shape a new narrative.</p>
             </div>
-             <div className="w-full max-w-4xl flex-[1_1_45vh] min-h-[160px]"> {/*FIX: Adjusted flex for responsive height*/}
+            
+            <div className="w-full max-w-4xl flex-[1_1_45vh] min-h-[160px]">
                  <OutputBox storyText={story} />
             </div>
+
             <div className="w-full max-w-4xl space-y-4">
               {storyInputs.characters.length > 0 && (
                 <div className="p-4 bg-black/20 rounded-lg">
@@ -194,12 +211,13 @@ function App() {
                 prompt={storyInputs.prompt}
                 onPromptChange={handlePromptChange}
                 onForge={handleStoryForge}
-                // Pass the loading state to disable the button during generation
                 isLoading={isLoading} 
               />
             </div>
         </main>
       </div>
+
+      {isSettingsModalOpen && <SettingsModal onClose={handleCloseSettings} />}
     </div>
   );
 }

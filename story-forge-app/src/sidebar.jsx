@@ -1,56 +1,72 @@
 // src/Sidebar.jsx
 import React from 'react';
 
-/**
- * A reusable link/button component for the sidebar.
- */
-function SidebarLink({ text, icon, onClick }) {
-  // Common classes for styling
-  const classes = "flex w-full items-center gap-3 px-4 py-3 text-blue-100 rounded-lg hover:bg-blue-700/50 transition-colors";
-
-  // Render as a <button> if onClick is provided, otherwise as an <a>
-  return onClick ? (
-    <button onClick={onClick} className={classes}>
-      <span className="text-xl">{icon}</span>
-      <span className="font-medium">{text}</span>
+function SidebarLink({ text, icon, onClick, isActive }) {
+  const baseClasses = "flex w-full items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left truncate";
+  const activeClasses = isActive ? "bg-blue-700 text-white shadow-md" : "text-blue-100 hover:bg-blue-700/50";
+  
+  return (
+    <button onClick={onClick} className={`${baseClasses} ${activeClasses}`}>
+      <span className="text-xl flex-shrink-0">{icon}</span>
+      <span className="font-medium truncate">{text}</span>
     </button>
-  ) : (
-    <a href="#" className={classes}>
-      <span className="text-xl">{icon}</span>
-      <span className="font-medium">{text}</span>
-    </a>
   );
 }
 
-// function for new chat componenet in sidebar
-function Sidebar({ onNewChat }) {
+// 1. We use 'onNewChat' for both Home and New Story
+function Sidebar({ onNewChat, onOpenSettings, savedStories = [], onLoadStory, currentStoryId }) {
   return (
-    // This styling will overlay the gradient from App.jsx
-    //<aside className="w-64 h-screen bg-black/20 backdrop-blur-md p-4 flex flex-col shadow-lg flex-shrink-0">
     <aside className="w-64 h-screen bg-[#1A3636] p-4 flex flex-col shadow-lg flex-shrink-0">
-
       
-      {/* Logo/Title Section */}
       <div className="mb-8 p-4">
         <h1 className="text-2xl font-bold text-center text-white">
           Story Forge
         </h1>
       </div>
 
-      {/* Navigation Links */}
-      <nav className="flex flex-col gap-2">
-        {/* This button is wired to the handleNewChat function in App.jsx */}
-        <SidebarLink text="New Story" icon="✨" onClick={onNewChat} />
-        <SidebarLink text="Home" icon="🏠" />
-        <SidebarLink text="My Library" icon="📚" />
+      <nav className="flex flex-col gap-2 h-full overflow-hidden">
+        {/* 2. Both buttons now trigger onNewChat */}
+        <SidebarLink 
+            text="New Story" 
+            icon="✨" 
+            onClick={onNewChat} 
+            isActive={!currentStoryId} // Highlight if we are NOT viewing a saved story
+        />
+        <SidebarLink 
+            text="Home" 
+            icon="🏠" 
+            onClick={onNewChat} 
+        />
+        
+        <div className="border-t border-white/10 my-2"></div>
+        
+        <div className="flex flex-col flex-grow overflow-y-auto min-h-0">
+          <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+            My Library
+          </div>
+          
+          {savedStories.length === 0 ? (
+            <div className="px-4 py-2 text-sm text-gray-500 italic">
+              No stories forged yet...
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1">
+              {savedStories.map((story) => (
+                <SidebarLink 
+                  key={story.id}
+                  text={story.title} 
+                  icon="📜" 
+                  isActive={currentStoryId === story.id}
+                  onClick={() => onLoadStory(story)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </nav>
 
-      {/* Spacer to push settings to the bottom */}
-      <div className="flex-grow"></div>
-
-      {/* Settings Link at bottom */}
-      <div className="border-t border-white/20 pt-4">
-        <SidebarLink text="Settings" icon="⚙️" />
+      <div className="border-t border-white/20 pt-4 mt-auto">
+        <SidebarLink text="Settings" icon="⚙️" onClick={onOpenSettings} />
       </div>
     </aside>
   );
