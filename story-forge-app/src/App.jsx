@@ -12,6 +12,7 @@ import SettingsModal from './SettingsModal.jsx';
 import React, { useState, useEffect } from 'react';
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
+import { saveStory, loadUserStories, updateStory, deleteStory } from './firebaseDb.js';
 
 // Define API Base URL
 const API_BASE = import.meta.env.VITE_API_URL ?? "https://group-03-project-csce3444-fa25.onrender.com";
@@ -38,7 +39,22 @@ function App() {
 
   // Monitor authentication state
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => setUser(currentUser));
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      // Load stories when user logs in
+      if (currentUser) {
+        try {
+          const stories = await loadUserStories(currentUser.uid);
+          setSavedStories(stories);
+        } catch (error) {
+          console.error("Failed to load stories:", error);
+        }
+      } else {
+        // Clear stories when user logs out
+        setSavedStories([]);
+        setCurrentStoryId(null);
+      }
+    });
     return () => unsubscribe();
   }, []);
 
@@ -95,19 +111,42 @@ function App() {
 
         // --- SAVE TO LIBRARY LOGIC ---
         if (!currentStoryId) {
-            const newId = Date.now();
             const newStoryEntry = {
-              id: newId,
+              id: Date.now(), // Local ID for quick reference
               title: storyInputs.prompt.substring(0, 30) + (storyInputs.prompt.length > 30 ? "..." : ""),
               content: newStoryText,
-              inputs: { ...storyInputs } 
+              inputs: { ...storyInputs },
+              createdAt: new Date()
             };
+            
+            // Save to Firestore if user is authenticated
+            if (user) {
+              try {
+                const firestoreId = await saveStory(user.uid, newStoryEntry);
+                newStoryEntry.firestoreId = firestoreId;
+              } catch (error) {
+                console.error("Failed to persist story to Firestore:", error);
+              }
+            }
+            
             setSavedStories(prev => [newStoryEntry, ...prev]); 
-            setCurrentStoryId(newId);
+            setCurrentStoryId(newStoryEntry.id);
         } else {
+            const updatedContent = newStoryText;
+            
+            // Update in Firestore
+            const storyToUpdate = savedStories.find(s => s.id === currentStoryId);
+            if (user && storyToUpdate?.firestoreId) {
+              try {
+                await updateStory(user.uid, storyToUpdate.firestoreId, { content: updatedContent });
+              } catch (error) {
+                console.error("Failed to update story in Firestore:", error);
+              }
+            }
+            
             setSavedStories(prev => prev.map(s => 
               s.id === currentStoryId 
-                ? { ...s, content: newStoryText } 
+                ? { ...s, content: updatedContent } 
                 : s
             ));
         }
@@ -128,6 +167,30 @@ function App() {
     setStoryInputs(savedStory.inputs); 
     setCurrentStoryId(savedStory.id);
     setIsStoryStarted(true);
+  };
+
+  // --- Delete Saved Story ---
+  const handleDeleteStory = async (storyToDelete) => {
+    if (!window.confirm(`Delete "${storyToDelete.title}"?`)) return;
+    
+    // Delete from Firestore if it has a firestoreId
+    if (user && storyToDelete.firestoreId) {
+      try {
+        await deleteStory(user.uid, storyToDelete.firestoreId);
+      } catch (error) {
+        console.error("Failed to delete story from Firestore:", error);
+        alert("Failed to delete story. Please try again.");
+        return;
+      }
+    }
+    
+    // Remove from state
+    setSavedStories(prev => prev.filter(s => s.id !== storyToDelete.id));
+    
+    // If we're viewing the deleted story, reset
+    if (currentStoryId === storyToDelete.id) {
+      handleNewChat();
+    }
   };
 
   // --- New Chat / Reset ---
@@ -156,6 +219,7 @@ function App() {
         onOpenSettings={handleOpenSettings}
         savedStories={savedStories}
         onLoadStory={handleLoadStory}
+        onDeleteStory={handleDeleteStory}
         currentStoryId={currentStoryId}
       />
 

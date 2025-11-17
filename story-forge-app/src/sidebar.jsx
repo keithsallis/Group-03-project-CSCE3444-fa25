@@ -13,8 +13,34 @@ function SidebarLink({ text, icon, onClick, isActive }) {
   );
 }
 
+function StoryItem({ story, isActive, onLoad, onDelete, currentStoryId }) {
+  return (
+    <div className="flex items-center gap-1 rounded-lg hover:bg-blue-700/30 transition-colors group">
+      <button
+        onClick={() => onLoad(story)}
+        className={`flex-1 flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left truncate ${
+          isActive ? 'bg-blue-700 text-white shadow-md' : 'text-blue-100'
+        }`}
+      >
+        <span className="text-xl flex-shrink-0">📜</span>
+        <span className="font-medium truncate">{story.title}</span>
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(story);
+        }}
+        className="px-2 py-3 text-gray-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+        title="Delete story"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
 // 1. We use 'onNewChat' for both Home and New Story
-function Sidebar({ onNewChat, onOpenSettings, savedStories = [], onLoadStory, currentStoryId }) {
+function Sidebar({ onNewChat, onOpenSettings, savedStories = [], onLoadStory, currentStoryId, onDeleteStory }) {
   return (
     <aside className="w-64 h-screen bg-[#1A3636] p-4 flex flex-col shadow-lg flex-shrink-0">
       
@@ -52,12 +78,13 @@ function Sidebar({ onNewChat, onOpenSettings, savedStories = [], onLoadStory, cu
           ) : (
             <div className="flex flex-col gap-1">
               {savedStories.map((story) => (
-                <SidebarLink 
+                <StoryItem
                   key={story.id}
-                  text={story.title} 
-                  icon="📜" 
+                  story={story}
                   isActive={currentStoryId === story.id}
-                  onClick={() => onLoadStory(story)}
+                  onLoad={onLoadStory}
+                  onDelete={onDeleteStory}
+                  currentStoryId={currentStoryId}
                 />
               ))}
             </div>
