@@ -96,3 +96,6 @@ Continue the story now:
         return {"story": response.content}
     except Exception as e:
         return {"error": "Failed to generate story."}, 500
+
+# To run the server, use the command in your terminal:
+# uvicorn main:app --reload
