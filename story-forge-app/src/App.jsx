@@ -71,6 +71,14 @@ function App() {
   const handleGenreChange = (newGenre) => setStoryInputs(prev => ({ ...prev, genre: newGenre }));
   const handleSettingChange = (e) => setStoryInputs(prev => ({ ...prev, setting: e.target.value }));
   const handlePromptChange = (e) => setStoryInputs(prev => ({ ...prev, prompt: e.target.value }));
+
+  const generBackgrounds = {
+    Fantasy: "/src/assets/GenreThemes/fantasy.png",
+    'Science Fiction': "/src/assets/GenreThemes/Scifi.jpg",
+    Mystery: "/src/assets/GenreThemes/mystery.jpg",
+    Adventure: "/src/assets/GenreThemes/adventure.png"
+  };
+
   // NEW: Handler for style change
   const handleStyleChange = (newStyle) => setStoryInputs(prev => ({ ...prev, style: newStyle }));
 
@@ -221,80 +229,116 @@ function App() {
 
   return (
     // --- UPDATED: Using the specific #40534C background and overflow settings ---
-    <div className="h-screen text-white font-sans flex antialiased overflow-hidden" style={{ backgroundColor: '#40534C' }}>
-      
-      <Sidebar 
-        onNewChat={handleNewChat} 
-        onOpenSettings={handleOpenSettings}
-        savedStories={savedStories}
-        onLoadStory={handleLoadStory}
-        onDeleteStory={handleDeleteStory}
-        currentStoryId={currentStoryId}
-      />
+    // ADD: new themes dependent on genre selected
+   <div
+      className="relative h-screen text-white font-sans flex antialiased overflow-hidden"
+      style={{ backgroundColor: "#40534C" }}>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header user={user} />
-        <main className="flex-grow flex flex-col items-center p-6 lg:p-12 space-y-8 overflow-y-auto">
-            <div className="w-full max-w-4xl text-center space-y-2">
-                 <h2 className="text-4xl md:text-5xl font-bold">
-                   {(() => {
-                     if (!user) return 'Ready to Craft?'
-                     const display = user.displayName || ''
-                     const firstName = display ? display.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'User')
-                     return `Ready to Craft, ${firstName}?`
-                   })()}
-                 </h2>
-                 <p className="text-lg text-blue-200">Let's shape a new narrative.</p>
-            </div>
-            
-            <div className="w-full max-w-4xl flex-[1_1_45vh] min-h-[160px]">
-                 <OutputBox storyText={story} />
-            </div>
+    {/* BACKGROUND IMAGE WITH FADE */}
+    <div
+      className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700 ease-in-out"
+      style={{
+      backgroundImage: storyInputs.genre
+        ? `url(${generBackgrounds[storyInputs.genre]})`
+        : "none",
+      opacity: storyInputs.genre ? 1 : 0,
+      }}/>
 
-            <div className="w-full max-w-4xl space-y-4">
-              {storyInputs.characters.length > 0 && (
-                <div className="p-4 bg-black/20 rounded-lg">
-                    <h4 className="text-sm font-bold text-white mb-2">Characters:</h4>
-                    <div className="flex flex-wrap gap-2">
-                        {storyInputs.characters.map((char, index) => (
-                            <div key={index} className="flex items-center bg-blue-500/50 rounded-full px-3 py-1 text-sm">
-                                <span>{char.name}</span>
-                                <button onClick={() => handleRemoveCharacter(index)} className="ml-2 text-white hover:text-red-300 text-lg">&times;</button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-              )}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <CharacterInput onAddCharacter={handleAddCharacter} />
-                  {!isStoryStarted && (
-                    <>
-                      <GenreSelect 
-                        selectedGenre={storyInputs.genre}
-                        onGenreChange={handleGenreChange}
-                      />
-                      <SceneBuilder 
-                        setting={storyInputs.setting}
-                        onSettingChange={handleSettingChange}
-                      />
-                    </>
-                  )}
+  {/* BLUR + DARK OVERLAY */}
+  <div className="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-none" />
+
+  {/* APP CONTENT */}
+  <div className="relative flex w-full h-full">
+    <Sidebar 
+      onNewChat={handleNewChat} 
+      onOpenSettings={handleOpenSettings}
+      savedStories={savedStories}
+      onLoadStory={handleLoadStory}
+      onDeleteStory={handleDeleteStory}
+      currentStoryId={currentStoryId}
+    />
+
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <Header user={user} />
+
+      <main className="flex-grow flex flex-col items-center p-6 lg:p-12 space-y-8 overflow-y-auto">
+        <div className="w-full max-w-4xl text-center space-y-2">
+          {/* Header Content*/}
+          <h2 className="text-4xl md:text-5xl font-bold">
+            {(() => {
+              if (!user) return "Ready to Craft?";
+              const display = user.displayName || "";
+              const firstName = display
+                ? display.split(" ")[0]
+                : user.email
+                ? user.email.split("@")[0]
+                : "User";
+              return `Ready to Craft, ${firstName}?`;
+            })()}
+          </h2>
+          <p className="text-lg text-blue-200">Let's shape a new narrative.</p>
+        </div>
+
+        <div className="w-full max-w-4xl flex-[1_1_45vh] min-h-[160px]">
+          <OutputBox storyText={story} />
+        </div>
+
+        <div className="w-full max-w-4xl space-y-4">
+          {storyInputs.characters.length > 0 && (
+            <div className="p-4 bg-black/20 rounded-lg">
+              <h4 className="text-sm font-bold text-white mb-2">Characters:</h4>
+              <div className="flex flex-wrap gap-2">
+                {storyInputs.characters.map((char, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center bg-blue-500/50 rounded-full px-3 py-1 text-sm"
+                  >
+                    <span>{char.name}</span>
+                    <button
+                      onClick={() => handleRemoveCharacter(index)}
+                      className="ml-2 text-white hover:text-red-300 text-lg"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
               </div>
-              {/* UPDATED: Prompt Input now handles Style Selection */}
-              <PromptInput 
-                prompt={storyInputs.prompt}
-                onPromptChange={handlePromptChange}
-                onForge={handleStoryForge}
-                style={storyInputs.style}
-                onStyleChange={handleStyleChange}
-                isLoading={isLoading} 
-              />
             </div>
-        </main>
-      </div>
+          )}
 
-      {isSettingsModalOpen && <SettingsModal onClose={handleCloseSettings} />}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <CharacterInput onAddCharacter={handleAddCharacter} />
+
+            {!isStoryStarted && (
+              <>
+                <GenreSelect
+                  selectedGenre={storyInputs.genre}
+                  onGenreChange={handleGenreChange}
+                />
+                <SceneBuilder
+                  setting={storyInputs.setting}
+                  onSettingChange={handleSettingChange}
+                />
+              </>
+            )}
+          </div>
+
+          <PromptInput
+            prompt={storyInputs.prompt}
+            onPromptChange={handlePromptChange}
+            onForge={handleStoryForge}
+            style={storyInputs.style}
+            onStyleChange={handleStyleChange}
+            isLoading={isLoading}
+          />
+        </div>
+      </main>
     </div>
+
+    {isSettingsModalOpen && <SettingsModal onClose={handleCloseSettings} />}
+  </div>
+</div>
+
   );
 }
 

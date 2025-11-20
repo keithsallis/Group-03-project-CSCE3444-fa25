@@ -1,1 +1,5 @@
-{}
+{
+  "dependencies": {
+    "packages": "^0.0.8"
+  }
+}

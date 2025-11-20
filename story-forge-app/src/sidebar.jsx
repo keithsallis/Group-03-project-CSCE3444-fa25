@@ -13,7 +13,7 @@ function SidebarLink({ text, icon, onClick, isActive }) {
   );
 }
 
-function StoryItem({ story, isActive, onLoad, onDelete, currentStoryId }) {
+function StoryItem({ story, isActive, onLoad, onDelete }) {
   return (
     <div className="flex items-center gap-1 rounded-lg hover:bg-blue-700/30 transition-colors group">
       <button
