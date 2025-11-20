@@ -20,6 +20,17 @@
       "Difficult Dungeon": "A dark, trap-filled dungeon...",
       "Moonlit Dinner": "A romantic dinner under the stars..."
     },
+    "styles": {
+      "Default": "Write in a standard, clear, and engaging storytelling voice.",
+      "Noir": "Write in a gritty, cynical tone with short sentences, focusing on shadows, rain, and moral ambiguity.",
+      "Shakespearean": "Write in Early Modern English, using poetic metaphors, soliloquies, and dramatic flair.",
+      "Dr. Seuss": "Write in whimsical, rhythmic, and rhyming verse with playful, made-up words.",
+      "Lovecraftian": "Write in a dense, archaic style focusing on cosmic horror, madness, and the indescribable nature of the unknown.",
+      "Cyberpunk": "Use tech-heavy slang, rapid-fire pacing, and focus on high-tech low-life aesthetics.",
+      "Hemingway": "Write with extreme brevity. Use simple, direct, declarative sentences. Focus on action and facts rather than internal emotion.",
+      "Gothic": "Use flowery, melodramatic language focusing on decay, haunted pasts, and intense romantic longing."
+    },
+
     "rules": {
       "introduction": "You are a master storyteller AI...",
       "character_handling": "Integrate the characters naturally...",

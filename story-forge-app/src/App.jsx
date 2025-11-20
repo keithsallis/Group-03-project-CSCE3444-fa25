@@ -29,6 +29,7 @@ function App() {
     characters: [],
     genre: '',
     setting: '',
+    style: 'Default', // <--- NEW: Added style state
     prompt: ''
   });
 
@@ -70,6 +71,8 @@ function App() {
   const handleGenreChange = (newGenre) => setStoryInputs(prev => ({ ...prev, genre: newGenre }));
   const handleSettingChange = (e) => setStoryInputs(prev => ({ ...prev, setting: e.target.value }));
   const handlePromptChange = (e) => setStoryInputs(prev => ({ ...prev, prompt: e.target.value }));
+  // NEW: Handler for style change
+  const handleStyleChange = (newStyle) => setStoryInputs(prev => ({ ...prev, style: newStyle }));
 
   // --- Story Generation Logic ---
   const handleStoryForge = async () => {
@@ -84,6 +87,7 @@ function App() {
         characters: storyInputs.characters,
         genre: storyInputs.genre,
         environment: storyInputs.setting,
+        style: storyInputs.style, // <--- NEW: Include style in payload
         prompt: storyInputs.prompt,
         previous_story: previousStoryPayload
     };
@@ -164,7 +168,11 @@ function App() {
   // --- Load Saved Story ---
   const handleLoadStory = (savedStory) => {
     setStory(savedStory.content);
-    setStoryInputs(savedStory.inputs); 
+    // Ensure legacy stories load with a default style if they don't have one
+    setStoryInputs({
+        ...savedStory.inputs,
+        style: savedStory.inputs.style || 'Default'
+    }); 
     setCurrentStoryId(savedStory.id);
     setIsStoryStarted(true);
   };
@@ -200,6 +208,7 @@ function App() {
         characters: [],
         genre: '',
         setting: '',
+        style: 'Default', // Reset style to default
         prompt: ''
     });
     setIsStoryStarted(false);
@@ -271,10 +280,13 @@ function App() {
                     </>
                   )}
               </div>
+              {/* UPDATED: Prompt Input now handles Style Selection */}
               <PromptInput 
                 prompt={storyInputs.prompt}
                 onPromptChange={handlePromptChange}
                 onForge={handleStoryForge}
+                style={storyInputs.style}
+                onStyleChange={handleStyleChange}
                 isLoading={isLoading} 
               />
             </div>
