@@ -15,10 +15,10 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { saveStory, loadUserStories, updateStory, deleteStory } from './firebaseDb.js';
 
 // imports for genre backgrounds
-import fantasyBg from './assets/GenreThemes/fantasy.png';
+import fantasyBg from './assets/GenreThemes/Fantasy.png';
 import scifiBg from './assets/GenreThemes/Scifi.jpg';
 import mysteryBg from './assets/GenreThemes/mystery.jpg';
-import adventureBg from './assets/GenreThemes/adventure.png';
+import adventureBg from './assets/GenreThemes/Adventure.png';
 
 // Define API Base URL
 const API_BASE = import.meta.env.VITE_API_URL ?? "https://group-03-project-csce3444-fa25.onrender.com";
