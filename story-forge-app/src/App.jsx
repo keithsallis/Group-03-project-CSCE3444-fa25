@@ -14,6 +14,12 @@ import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import { saveStory, loadUserStories, updateStory, deleteStory } from './firebaseDb.js';
 
+// imports for genre backgrounds
+import fantasyBg from './assets/GenreThemes/fantasy.png';
+import scifiBg from './assets/GenreThemes/Scifi.jpg';
+import mysteryBg from './assets/GenreThemes/mystery.jpg';
+import adventureBg from './assets/GenreThemes/adventure.png';
+
 // Define API Base URL
 const API_BASE = import.meta.env.VITE_API_URL ?? "https://group-03-project-csce3444-fa25.onrender.com";
 
@@ -72,11 +78,12 @@ function App() {
   const handleSettingChange = (e) => setStoryInputs(prev => ({ ...prev, setting: e.target.value }));
   const handlePromptChange = (e) => setStoryInputs(prev => ({ ...prev, prompt: e.target.value }));
 
+  // Genre background images mapping
   const generBackgrounds = {
-    Fantasy: "/src/assets/GenreThemes/fantasy.png",
-    'Science Fiction': "/src/assets/GenreThemes/Scifi.jpg",
-    Mystery: "/src/assets/GenreThemes/mystery.jpg",
-    Adventure: "/src/assets/GenreThemes/adventure.png"
+    Fantasy: fantasyBg,
+    'Science Fiction': scifiBg,
+    Mystery: mysteryBg,
+    Adventure: adventureBg
   };
 
   // NEW: Handler for style change
