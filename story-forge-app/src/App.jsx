@@ -23,6 +23,7 @@ import adventureBg from './assets/GenreThemes/Adventure.png';
 // Define API Base URL
 const API_BASE = import.meta.env.VITE_API_URL ?? "https://group-03-project-csce3444-fa25.onrender.com";
 
+console.log("Dynamically connected to API at:", API_BASE);
 // --- Main App Component ---
 function App() {
   const [story, setStory] = useState("Your generated story will appear here...");
@@ -44,6 +45,8 @@ function App() {
   const [currentStoryId, setCurrentStoryId] = useState(null);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
+  // New: sidebar open/close state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   // Monitor authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -236,9 +239,10 @@ function App() {
 
   return (
     // --- UPDATED: Using the specific #40534C background and overflow settings ---
+    // UPDATED: To fit small screens as well as traditional desktop screens
     // ADD: new themes dependent on genre selected
    <div
-      className="relative h-screen text-white font-sans flex antialiased overflow-hidden"
+      className="relative min-h-screen text-white font-sans flex antialiased overflow-x-hidden" 
       style={{ backgroundColor: "#40534C" }}>
 
     {/* BACKGROUND IMAGE WITH FADE */}
@@ -254,8 +258,9 @@ function App() {
   {/* BLUR + DARK OVERLAY */}
   <div className="absolute inset-0 bg-black/40 backdrop-blur-sm pointer-events-none" />
 
-  {/* APP CONTENT */}
-  <div className="relative flex w-full h-full">
+  {/* APP CONTENT */
+  /*UPDATED: now includes use values for sidebar state*/}
+  <div className="relative flex w-full min-h-screen">
     <Sidebar 
       onNewChat={handleNewChat} 
       onOpenSettings={handleOpenSettings}
@@ -263,10 +268,15 @@ function App() {
       onLoadStory={handleLoadStory}
       onDeleteStory={handleDeleteStory}
       currentStoryId={currentStoryId}
+      isOpen={isSidebarOpen}
+      onToggle={() => setIsSidebarOpen(prev => !prev)}
     />
 
     <div className="flex-1 flex flex-col overflow-hidden">
-      <Header user={user} />
+      <Header 
+          user={user}
+          onToggleSidebar={() => setIsSidebarOpen(prev => !prev)} 
+      />
 
       <main className="flex-grow flex flex-col items-center p-6 lg:p-12 space-y-8 overflow-y-auto">
         <div className="w-full max-w-4xl text-center space-y-2">
