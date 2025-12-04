@@ -88,8 +88,8 @@ function Landing() {
 
         {/* Footer / Credits */}
         <div className="text-center text-white/40 text-xs md:text-sm font-mono mb-2 md:mb-0">
-          <p>Powered by Gemini AI & Kokoro TTS</p>
-          <p>Crafted by Group 03</p>
+        <p>Powered by generational lock in</p>
+          <p>Crafted by 3pc no bev</p>
         </div>
       </div>
     </div>
