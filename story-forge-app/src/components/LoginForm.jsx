@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth } from '../contexts/authCore.jsx'
 
-export default function LoginForm({ onSuccess }) {
+export default function LoginForm({ onSuccess, onForgotPassword }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -42,7 +42,14 @@ export default function LoginForm({ onSuccess }) {
         required
         className="w-full px-3 py-2 border rounded"
       />
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <button
+          type="button"
+          onClick={onForgotPassword}
+          className="text-sm text-blue-600 hover:text-blue-800"
+        >
+          Forgot Password?
+        </button>
         <button disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded">
           {loading ? 'Signing in...' : 'Sign in'}
         </button>
