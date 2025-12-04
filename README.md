@@ -6,7 +6,7 @@ Team Members:
 - Matthew Alves - MatthewAlves@my.unt.edu 
 - Keith Sallis - KeithSallis@my.unt.edu 
 
-Project Idea: User(s) can make their own stories with prompts using AI that will output a narrative and images.
+Project Idea: User(s) can make their own stories with prompts using AI that will output sharable narratives.
 
 How to run locally:
     - Open terminal in "Backend" and run: python -m uvicorn main:app --reload
