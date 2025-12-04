@@ -1,15 +1,31 @@
+// src/OutPutBox.jsx
 import React from 'react';
 
-// OutputBox component to display the generated story
-function OutputBox({ storyText }) {
-  return (
-    // FIX:changed h-96 to h-gull to make height responsive to parent container
-    <div className="w-full h-full p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl shadow-lg flex justify-center overflow-hidden">
+function OutputBox({ storyText, theme, fontSize = 'medium' }) {
+  
+  // Determine styles based on theme
+  const isLight = theme === 'light';
 
-      {/* FIX: changed max-h[100%] to max-h-full to keep height consistent with parent.*/}
-      <div className="text-blue-100 text-lg leading-relaxed text-left w-full max-h-full overflow-y-auto">
-        
-        {/* Preserve whitespace and line breaks in the story text */}
+  // Translucent / Glassmorphism Styles
+  const containerClass = isLight 
+    ? "bg-white/60 border-white/50 text-gray-900 shadow-lg backdrop-blur-md" // Light Mode Glass
+    : "bg-black/40 border-white/10 text-blue-100 shadow-xl backdrop-blur-md"; // Dark Mode Glass
+
+  // Map Font Size settings to CSS classes
+  const sizeClass = {
+      small: 'text-sm leading-relaxed',
+      medium: 'text-lg leading-relaxed',
+      large: 'text-xl md:text-2xl leading-loose'
+  }[fontSize];
+
+  return (
+    <div className={`relative w-full h-full p-6 border rounded-xl flex flex-col overflow-hidden transition-all duration-300 ${containerClass}`}>
+      
+      {/* TTS Controls were removed here. 
+          The box is now just a clean, translucent reading pane.
+      */}
+
+      <div className={`w-full max-h-full overflow-y-auto custom-scrollbar ${sizeClass}`}>
         <p className="whitespace-pre-wrap">{storyText}</p>
       </div>
     </div>

@@ -1,90 +1,64 @@
 // src/Sidebar.jsx
 import React from 'react';
 
-function SidebarLink({ text, icon, onClick, isActive }) {
+function SidebarLink({ text, icon, onClick, isActive, theme }) {
+  const isLight = theme === 'light';
+  
+  const hoverClass = isLight ? "hover:bg-gray-100 text-gray-700" : "hover:bg-blue-700/50 text-blue-100";
+  const activeClass = isLight ? "bg-gray-200 text-black shadow-sm" : "bg-blue-700 text-white shadow-md";
+  
   const baseClasses = "flex w-full items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left truncate";
-  const activeClasses = isActive ? "bg-blue-700 text-white shadow-md" : "text-blue-100 hover:bg-blue-700/50";
+  const finalClasses = isActive ? activeClass : hoverClass;
   
   return (
-    <button onClick={onClick} className={`${baseClasses} ${activeClasses}`}>
+    <button onClick={onClick} className={`${baseClasses} ${finalClasses}`}>
       <span className="text-xl flex-shrink-0">{icon}</span>
       <span className="font-medium truncate">{text}</span>
     </button>
   );
 }
 
-function StoryItem({ story, isActive, onLoad, onDelete }) {
-  return (
-    <div className="flex items-center gap-1 rounded-lg hover:bg-blue-700/30 transition-colors group">
-      <button
-        onClick={() => onLoad(story)}
-        className={`flex-1 flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left truncate ${
-          isActive ? 'bg-blue-700 text-white shadow-md' : 'text-blue-100'
-        }`}
-      >
-        <span className="text-xl flex-shrink-0">📜</span>
-        <span className="font-medium truncate">{story.title}</span>
-      </button>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete(story);
-        }}
-        className="px-2 py-3 text-gray-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
-        title="Delete story"
-      >
-        ✕
-      </button>
-    </div>
-  );
-}
+function Sidebar({ onNewChat, onOpenSettings, savedStories = [], onLoadStory, currentStoryId, theme, colors }) {
+  const isLight = theme === 'light';
 
-// 1. We use 'onNewChat' for both Home and New Story
-function Sidebar({ onNewChat, onOpenSettings, savedStories = [], onLoadStory, currentStoryId, onDeleteStory }) {
   return (
-    <aside className="w-64 h-screen bg-[#1A3636] p-4 flex flex-col shadow-lg flex-shrink-0">
+    <aside 
+        className={`w-64 h-full p-4 flex flex-col shadow-lg flex-shrink-0 transition-colors duration-300`}
+        // Use the exact color from the theme config
+        style={{ backgroundColor: colors.sidebarBg }}
+    >
       
       <div className="mb-8 p-4">
-        <h1 className="text-2xl font-bold text-center text-white">
+        <h1 className={`text-2xl font-bold text-center ${colors.textColor}`}>
           Story Forge
         </h1>
       </div>
 
       <nav className="flex flex-col gap-2 h-full overflow-hidden">
-        {/* 2. Both buttons now trigger onNewChat */}
-        <SidebarLink 
-            text="New Story" 
-            icon="✨" 
-            onClick={onNewChat} 
-            isActive={!currentStoryId} // Highlight if we are NOT viewing a saved story
-        />
-        <SidebarLink 
-            text="Home" 
-            icon="🏠" 
-            onClick={onNewChat} 
-        />
+        <SidebarLink text="New Story" icon="✨" onClick={onNewChat} isActive={!currentStoryId} theme={theme} />
+        <SidebarLink text="Home" icon="🏠" onClick={onNewChat} theme={theme} />
         
-        <div className="border-t border-white/10 my-2"></div>
+        <div className={`border-t my-2 ${isLight ? 'border-gray-300' : 'border-white/20'}`}></div>
         
         <div className="flex flex-col flex-grow overflow-y-auto min-h-0">
-          <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+          <div className={`px-4 py-2 text-xs font-bold uppercase tracking-wider ${isLight ? 'text-gray-500' : 'text-gray-400'}`}>
             My Library
           </div>
           
           {savedStories.length === 0 ? (
-            <div className="px-4 py-2 text-sm text-gray-500 italic">
+            <div className={`px-4 py-2 text-sm italic ${isLight ? 'text-gray-400' : 'text-gray-500'}`}>
               No stories forged yet...
             </div>
           ) : (
             <div className="flex flex-col gap-1">
               {savedStories.map((story) => (
-                <StoryItem
+                <SidebarLink 
                   key={story.id}
-                  story={story}
+                  text={story.title} 
+                  icon="📜" 
                   isActive={currentStoryId === story.id}
-                  onLoad={onLoadStory}
-                  onDelete={onDeleteStory}
-                  currentStoryId={currentStoryId}
+                  onClick={() => onLoadStory(story)}
+                  theme={theme}
                 />
               ))}
             </div>
@@ -92,8 +66,8 @@ function Sidebar({ onNewChat, onOpenSettings, savedStories = [], onLoadStory, cu
         </div>
       </nav>
 
-      <div className="border-t border-white/20 pt-4 mt-auto">
-        <SidebarLink text="Settings" icon="⚙️" onClick={onOpenSettings} />
+      <div className={`border-t pt-4 mt-auto ${isLight ? 'border-gray-300' : 'border-white/20'}`}>
+        <SidebarLink text="Settings" icon="⚙️" onClick={onOpenSettings} theme={theme} />
       </div>
     </aside>
   );
