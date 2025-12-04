@@ -1,7 +1,6 @@
 // src/Landing.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LoginButton from "./LoginButton.jsx";
 
 // IMPORTANT: make sure this image actually exists at this path
 // e.g. frontend/src/assets/mc_wallpaper_movie_portal_2560x1440.png
@@ -40,10 +39,6 @@ function Landing() {
 
       {/* --- CONTENT --- */}
       <div className="relative z-10 h-full flex flex-col items-center justify-between py-8 md:py-20 text-white">
-        {/* Top-right login (like the old Landing) */}
-        <header className="w-full flex justify-end px-6">
-          <LoginButton aria-label="Login" />
-        </header>
 
         {/* Header Section */}
         <div className="text-center space-y-4 animate-in fade-in slide-in-from-top-10 duration-1000 mt-4">

@@ -10,6 +10,7 @@ import {
   signInWithRedirect,
   getRedirectResult,
   updateProfile,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 
 import { AuthContext } from './authCore.jsx'
@@ -33,6 +34,10 @@ export default function AuthProvider({ children }) {
 
   function logout() {
     return signOut(auth);
+  }
+
+  function resetPassword(email) {
+    return sendPasswordResetEmail(auth, email);
   }
 
   function signInWithGoogle() {
@@ -69,7 +74,7 @@ export default function AuthProvider({ children }) {
     return () => unsub && unsub();
   }, []);
 
-  const value = { currentUser, signup, login, logout, signInWithGoogle, signInWithGoogleRedirect };
+  const value = { currentUser, signup, login, logout, resetPassword, signInWithGoogle, signInWithGoogleRedirect };
 
   return (
     <AuthContext.Provider value={value}>
