@@ -5,7 +5,7 @@ import PromptInput from './PromptInput.jsx';
 import GenreSelect from './GenreSelect.jsx'; 
 import OutputBox from './OutPutBox.jsx';
 import CharacterInput from './CharacterInput.jsx';
-import Sidebar from './Sidebar.jsx'; 
+import Sidebar from './sidebar.jsx'; 
 import SceneBuilder from './SceneBuilder.jsx';   
 import SettingsModal from './SettingsModal.jsx';
 

@@ -2,14 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // Must match keys in backend/context.json
 const WRITER_STYLES = [
-  "Default",
+  "Custom",
+  "Stephen King",
   "Noir",
   "Shakespearean",
   "Dr. Seuss",
-  "Lovecraftian",
-  "Cyberpunk",
-  "Hemingway",
-  "Gothic"
+  "Christopher Nolan"
 ];
 
 function PromptInput({ prompt, onPromptChange, onForge, style = "Default", onStyleChange, isLoading }) {

@@ -1,41 +1,39 @@
 {
     "genres": {
-      "Fantasy": "Write in a high-fantasy style...",
-      "Sci-Fi": "Adopt a science fiction narrative...",
-      "Mystery": "Craft a suspenseful mystery...",
-      "Romance": "Focus on the emotional development...",
-      "Horror": "Create a chilling horror atmosphere...",
-      "Adventure": "Develop an action-packed adventure...",
-      "Thriller": "Build a tense and gripping thriller...",
-      "Drama": "Explore deep character relationships...",
-      "Comedy": "Incorporate humor and light-hearted situations..."
+      "Fantasy": "Write using high-fantasy conventions with rich worldbuilding, mythic stakes, ancient magic systems, and heroic or tragic arcs. Use vivid sensory detail and elevated language.",
+      "Sci-Fi": "Write a science fiction narrative grounded in speculative technology, future societies, or space exploration. Emphasize cause-and-effect logic and scientific implications.",
+      "Mystery": "Craft a suspense-driven mystery centered on clues, red herrings, and logical deduction. Withhold key information strategically and resolve the central question clearly.",
+      "Romance": "Focus on emotional intimacy, character vulnerability, and relationship progression. Emphasize internal conflict, dialogue, and meaningful romantic tension.",
+      "Horror": "Create sustained dread through atmosphere, psychological tension, and escalating unease. Favor implication over explicit gore unless necessary.",
+      "Adventure": "Develop a fast-paced, action-forward narrative featuring danger, travel, and high-stakes obstacles with clear momentum.",
+      "Thriller": "Build relentless tension using time pressure, twists, and escalating threat. Maintain tight pacing and frequent plot turns.",
+      "Drama": "Explore deep interpersonal conflict, emotional consequences, moral dilemmas, and character-driven storytelling.",
+      "Comedy": "Use timing, irony, exaggeration, and situational conflict to generate humor while keeping characters grounded."
     },
     "environments": {
-      "Enchanted Forest": "A mystical woodland...",
-      "Cyberpunk City": "A neon-soaked, rain-slicked metropolis...",
-      "Quiet Library": "An ancient library...",
-      "Space Colony": "A sterile, metallic habitat...",
-      "Crime Scene": "A gritty urban alleyway...",
-      "Spooky Cabin": "A creaky, isolated cabin in the woods...",
-      "Difficult Dungeon": "A dark, trap-filled dungeon...",
-      "Moonlit Dinner": "A romantic dinner under the stars..."
+      "Enchanted Forest": "A luminous, ancient forest filled with bioluminescent flora, hidden magic, and sentient creatures. Emphasize wonder and danger.",
+      "Cyberpunk City": "A dense, neon-lit мегacity with cybernetic augmentation, corporate dominance, street-level decay, and constant digital noise.",
+      "Quiet Library": "A vast, echoing library filled with dust, forgotten knowledge, towering shelves, and an atmosphere of hushed reverence.",
+      "Space Colony": "A sealed, high-tech human settlement in deep space with artificial gravity, limited resources, and social tension.",
+      "Crime Scene": "A grim, detail-heavy urban location marked by violence, police activity, forensic evidence, and moral decay.",
+      "Spooky Cabin": "A rotting wooden cabin isolated deep in the wilderness with unnatural silence, unseen presences, and growing paranoia.",
+      "Difficult Dungeon": "A claustrophobic, trap-laden underground complex filled with ancient mechanisms, hostile creatures, and environmental hazards.",
+      "Moonlit Dinner": "An intimate outdoor dining setting illuminated by moonlight, soft wind, and quiet ambiance paired with emotional tension."
     },
     "styles": {
-      "Default": "Write in a standard, clear, and engaging storytelling voice.",
+      "Custom": "Write in a standard, clear, and engaging storytelling voice.",
+      "Stephen King": "Write with a grounded, small-town realism that slowly gives way to escalating horror. Focus on internal fear, psychological tension, and ordinary people facing extraordinary evil.",
       "Noir": "Write in a gritty, cynical tone with short sentences, focusing on shadows, rain, and moral ambiguity.",
       "Shakespearean": "Write in Early Modern English, using poetic metaphors, soliloquies, and dramatic flair.",
       "Dr. Seuss": "Write in whimsical, rhythmic, and rhyming verse with playful, made-up words.",
-      "Lovecraftian": "Write in a dense, archaic style focusing on cosmic horror, madness, and the indescribable nature of the unknown.",
-      "Cyberpunk": "Use tech-heavy slang, rapid-fire pacing, and focus on high-tech low-life aesthetics.",
-      "Hemingway": "Write with extreme brevity. Use simple, direct, declarative sentences. Focus on action and facts rather than internal emotion.",
-      "Gothic": "Use flowery, melodramatic language focusing on decay, haunted pasts, and intense romantic longing."
+      "Christopher Nolan": "Structure the narrative around non-linear time, memory, or perception. Emphasize intellectual tension, mystery, and large-scale stakes."
     },
 
     "rules": {
-      "introduction": "You are a master storyteller AI...",
-      "character_handling": "Integrate the characters naturally...",
-      "continuity": "Maintain strict continuity...",
-      "style": "Write in a clear, descriptive, and immersive third-person narrative style...",
-      "word_limit": "IMPORTANT: Keep your response concise and strictly under 150 words to allow for the next prompt."
+      "introduction": "You are an expert narrative-generation AI trained in genre accuracy, pacing control, and immersive storytelling.",
+      "character_handling": "Introduce characters with distinct goals, flaws, and motivations. Maintain consistent behavior and voice.",
+      "continuity": "Maintain strict logical, emotional, and spatial continuity across all events with no contradictions.",
+      "style": "Write in immersive third-person limited unless otherwise specified. Show emotion through action, dialogue, and subtext rather than exposition.",
+      "word_limit": "IMPORTANT: Your response must be between 100 and 150 words. Do not exceed 150 words."
     }
   }
