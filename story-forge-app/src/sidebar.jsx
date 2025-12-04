@@ -1,5 +1,6 @@
 // src/Sidebar.jsx
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function SidebarLink({ text, icon, onClick, isActive, theme }) {
   const isLight = theme === 'light';
@@ -20,6 +21,11 @@ function SidebarLink({ text, icon, onClick, isActive, theme }) {
 
 function Sidebar({ onNewChat, onOpenSettings, savedStories = [], onLoadStory, currentStoryId, theme, colors }) {
   const isLight = theme === 'light';
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate('/');
+  };
 
   return (
     <aside 
@@ -36,7 +42,7 @@ function Sidebar({ onNewChat, onOpenSettings, savedStories = [], onLoadStory, cu
 
       <nav className="flex flex-col gap-2 h-full overflow-hidden">
         <SidebarLink text="New Story" icon="✨" onClick={onNewChat} isActive={!currentStoryId} theme={theme} />
-        <SidebarLink text="Home" icon="🏠" onClick={onNewChat} theme={theme} />
+        <SidebarLink text="Home" icon="🏠" onClick={handleHomeClick} theme={theme} />
         
         <div className={`border-t my-2 ${isLight ? 'border-gray-300' : 'border-white/20'}`}></div>
         
