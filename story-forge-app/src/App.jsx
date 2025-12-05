@@ -8,11 +8,13 @@ import CharacterInput from './CharacterInput.jsx';
 import Sidebar from './sidebar.jsx'; 
 import SceneBuilder from './SceneBuilder.jsx';   
 import SettingsModal from './SettingsModal.jsx';
+import ShareModal from './components/ShareModal.jsx';
+import ImportModal from './components/ImportModal.jsx';
 
 import React, { useState, useEffect } from 'react';
 import { auth } from './firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
-import { saveStory, loadUserStories, updateStory, deleteStory } from './firebaseDb.js';
+import { saveStory, loadUserStories, updateStory, deleteStory, shareStory, importStory } from './firebaseDb.js';
 
 // imports for genre backgrounds
 import fantasyBg from './assets/GenreThemes/Fantasy.png';
@@ -50,6 +52,12 @@ function App() {
   const [savedStories, setSavedStories] = useState([]);
   const [currentStoryId, setCurrentStoryId] = useState(null);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  
+  // --- Share/Import Modal States ---
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareCode, setShareCode] = useState('');
+  const [isGeneratingCode, setIsGeneratingCode] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   // --- THEME CONFIGURATION ---
   const themeConfig = {
@@ -242,6 +250,59 @@ function App() {
     }
   };
 
+  // --- Share Story Handler ---
+  const handleShareStory = async (storyToShare) => {
+    setIsShareModalOpen(true);
+    setIsGeneratingCode(true);
+    
+    try {
+      const code = await shareStory({
+        title: storyToShare.title,
+        content: storyToShare.content,
+        inputs: storyToShare.inputs,
+        createdAt: storyToShare.createdAt
+      });
+      setShareCode(code);
+    } catch (error) {
+      console.error("Failed to share story:", error);
+      alert("Failed to generate share code. Please try again.");
+      setIsShareModalOpen(false);
+    } finally {
+      setIsGeneratingCode(false);
+    }
+  };
+
+  // --- Import Story Handler ---
+  const handleImportStory = async (code) => {
+    try {
+      const sharedStory = await importStory(code);
+      
+      // Create a new story entry with imported data
+      const newStoryEntry = {
+        id: Date.now(),
+        title: `📥 ${sharedStory.title}`,
+        content: sharedStory.content,
+        inputs: sharedStory.inputs || {},
+        createdAt: new Date()
+      };
+      
+      // Save to user's library if logged in
+      if (user) {
+        try {
+          const firestoreId = await saveStory(user.uid, newStoryEntry);
+          newStoryEntry.firestoreId = firestoreId;
+        } catch (error) {
+          console.error("Failed to save imported story:", error);
+        }
+      }
+      
+      setSavedStories(prev => [newStoryEntry, ...prev]);
+      alert(`✅ Successfully imported: "${sharedStory.title}"`);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   // --- NEW: Delete All Stories (Data Management) ---
   const handleDeleteAllStories = async () => {
     if (savedStories.length === 0) return;
@@ -284,6 +345,13 @@ function App() {
       setIsMobileMenuOpen(false);
   };
   const handleCloseSettings = () => setIsSettingsModalOpen(false);
+  
+  // --- Import Modal Handlers ---
+  const handleOpenImport = () => {
+      setIsImportModalOpen(true);
+      setIsMobileMenuOpen(false);
+  };
+  const handleCloseImport = () => setIsImportModalOpen(false);
 
   return (
     // Updated container to handle mobile layout
@@ -329,8 +397,10 @@ function App() {
                 <Sidebar 
                     onNewChat={handleNewChat} 
                     onOpenSettings={handleOpenSettings}
+                    onOpenImport={handleOpenImport}
                     savedStories={savedStories}
                     onLoadStory={handleLoadStory}
+                    onShareStory={handleShareStory}
                     onDeleteStory={handleDeleteStory}
                     currentStoryId={currentStoryId}
                     theme={theme}
@@ -436,6 +506,23 @@ function App() {
                 fontSize={fontSize}
                 onFontSizeChange={setFontSize}
                 onDeleteAll={handleDeleteAllStories}
+            />
+        )}
+        
+        {isShareModalOpen && (
+            <ShareModal
+                onClose={() => setIsShareModalOpen(false)}
+                shareCode={shareCode}
+                theme={theme}
+                isGenerating={isGeneratingCode}
+            />
+        )}
+        
+        {isImportModalOpen && (
+            <ImportModal
+                onClose={handleCloseImport}
+                onImport={handleImportStory}
+                theme={theme}
             />
         )}
     </div>
