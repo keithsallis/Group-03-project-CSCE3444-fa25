@@ -12,8 +12,8 @@ import ShareModal from './components/ShareModal.jsx';
 import ImportModal from './components/ImportModal.jsx';
 
 import React, { useState, useEffect } from 'react';
-import { auth } from './firebase.js';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from './contexts/authCore.jsx';
+import { generateStory } from './api.js';
 import { saveStory, loadUserStories, updateStory, deleteStory, shareStory, importStory } from './firebaseDb.js';
 
 // imports for genre backgrounds
@@ -22,13 +22,10 @@ import scifiBg from './assets/GenreThemes/Scifi.jpg';
 import mysteryBg from './assets/GenreThemes/mystery.jpg';
 import adventureBg from './assets/GenreThemes/Adventure.png';
 
-// Define API Base URL
-const API_BASE = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8000`;
-
 // --- Main App Component ---
 function App() {
+  const { currentUser: user } = useAuth();
   const [story, setStory] = useState("Your generated story will appear here...");
-  const [user, setUser] = useState(null);
   const [isStoryStarted, setIsStoryStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,7 +41,7 @@ function App() {
     characters: [],
     genre: '',
     setting: '',
-    style: 'Default',
+    style: 'Custom',
     prompt: ''
   });
 
@@ -86,24 +83,22 @@ function App() {
 
   const currentColors = themeConfig[theme];
 
-  // Monitor authentication state
+  // Load the user's saved stories whenever auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        try {
-          const stories = await loadUserStories(currentUser.uid);
-          setSavedStories(stories);
-        } catch (error) {
-          console.error("Failed to load stories:", error);
-        }
-      } else {
-        setSavedStories([]);
-        setCurrentStoryId(null);
+    if (!user) {
+      setSavedStories([]);
+      setCurrentStoryId(null);
+      return;
+    }
+    (async () => {
+      try {
+        const stories = await loadUserStories(user.uid);
+        setSavedStories(stories);
+      } catch (error) {
+        console.error("Failed to load stories:", error);
       }
-    });
-    return () => unsubscribe();
-  }, []);
+    })();
+  }, [user]);
 
   // Handlers for inputs
   const handleAddCharacter = (newCharacter) => {
@@ -125,7 +120,7 @@ function App() {
   // Genre background images mapping
   const generBackgrounds = {
     Fantasy: fantasyBg,
-    'Science Fiction': scifiBg,
+    'Sci-Fi': scifiBg,
     Mystery: mysteryBg,
     Adventure: adventureBg
   };
@@ -149,20 +144,9 @@ function App() {
     };
 
     try {
-        const response = await fetch(`${API_BASE}/generate_story`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+        const data = await generateStory(payload);
 
-        if (!response.ok) {
-            const errData = await response.json().catch(() => ({}));
-            throw new Error(errData.error || `HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        const newStoryText = isStoryStarted 
+        const newStoryText = isStoryStarted
             ? story.replace(/\.\.\.$/, "") + "\n\n" + data.story 
             : data.story;
 
@@ -172,7 +156,7 @@ function App() {
         // --- SAVE TO LIBRARY LOGIC ---
         if (!currentStoryId) {
             const newStoryEntry = {
-              id: Date.now(), 
+              id: crypto.randomUUID(),
               title: storyInputs.prompt.substring(0, 30) + (storyInputs.prompt.length > 30 ? "..." : ""),
               content: newStoryText,
               inputs: { ...storyInputs },
@@ -224,7 +208,7 @@ function App() {
     setStory(savedStory.content);
     setStoryInputs({
         ...savedStory.inputs,
-        style: savedStory.inputs.style || 'Default'
+        style: savedStory.inputs.style || 'Custom'
     }); 
     setCurrentStoryId(savedStory.id);
     setIsStoryStarted(true);
@@ -274,33 +258,29 @@ function App() {
 
   // --- Import Story Handler ---
   const handleImportStory = async (code) => {
-    try {
-      const sharedStory = await importStory(code);
-      
-      // Create a new story entry with imported data
-      const newStoryEntry = {
-        id: Date.now(),
-        title: `📥 ${sharedStory.title}`,
-        content: sharedStory.content,
-        inputs: sharedStory.inputs || {},
-        createdAt: new Date()
-      };
-      
-      // Save to user's library if logged in
-      if (user) {
-        try {
-          const firestoreId = await saveStory(user.uid, newStoryEntry);
-          newStoryEntry.firestoreId = firestoreId;
-        } catch (error) {
-          console.error("Failed to save imported story:", error);
-        }
+    const sharedStory = await importStory(code);
+
+    // Create a new story entry with imported data
+    const newStoryEntry = {
+      id: crypto.randomUUID(),
+      title: `📥 ${sharedStory.title}`,
+      content: sharedStory.content,
+      inputs: sharedStory.inputs || {},
+      createdAt: new Date()
+    };
+
+    // Save to user's library if logged in
+    if (user) {
+      try {
+        const firestoreId = await saveStory(user.uid, newStoryEntry);
+        newStoryEntry.firestoreId = firestoreId;
+      } catch (error) {
+        console.error("Failed to save imported story:", error);
       }
-      
-      setSavedStories(prev => [newStoryEntry, ...prev]);
-      alert(`✅ Successfully imported: "${sharedStory.title}"`);
-    } catch (error) {
-      throw error;
     }
+
+    setSavedStories(prev => [newStoryEntry, ...prev]);
+    alert(`✅ Successfully imported: "${sharedStory.title}"`);
   };
 
   // --- NEW: Delete All Stories (Data Management) ---
@@ -310,10 +290,11 @@ function App() {
 
     try {
       if (user) {
-        // Delete from Firestore one by one
-        for (const s of savedStories) {
-          if (s.firestoreId) await deleteStory(user.uid, s.firestoreId);
-        }
+        await Promise.all(
+          savedStories
+            .filter(s => s.firestoreId)
+            .map(s => deleteStory(user.uid, s.firestoreId))
+        );
       }
       setSavedStories([]);
       handleNewChat();
@@ -331,7 +312,7 @@ function App() {
         characters: [],
         genre: '',
         setting: '',
-        style: 'Default',
+        style: 'Custom',
         prompt: ''
     });
     setIsStoryStarted(false);

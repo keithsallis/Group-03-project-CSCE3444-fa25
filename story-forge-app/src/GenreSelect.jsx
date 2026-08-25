@@ -6,7 +6,7 @@ function GenreSelect({ selectedGenre, onGenreChange }) {
     const [isExpanded, setIsExpanded] = useState(false);
 
     // list of available genres
-    const genres = ["Fantasy", "Science Fiction", "Mystery", "Adventure"];
+    const genres = ["Fantasy", "Sci-Fi", "Mystery", "Adventure"];
 
     // handles genre selection and collapses the card
     const handleGenreSelect = (genre, event) => {

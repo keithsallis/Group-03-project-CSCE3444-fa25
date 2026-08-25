@@ -2,7 +2,6 @@ import React from 'react'
 import LoginForm from './LoginForm.jsx'
 import RegisterForm from './RegisterForm.jsx'
 import ForgotPasswordForm from './ForgotPasswordForm.jsx'
-import { useAuth } from '../contexts/authCore.jsx'
 
 export default function AuthModal({ isOpen, onClose }) {
   const [mode, setMode] = React.useState('login')
